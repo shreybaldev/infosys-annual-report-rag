@@ -1,0 +1,17 @@
+# Pinned with `~=` (compatible release): allows patch updates but blocks breaking
+# minor bumps. Strikes a balance between reproducibility and not freezing forever.
+# Streamlit Cloud reads this file from repo root.
+
+streamlit~=1.32
+pymupdf~=1.24            # PDF parsing (a.k.a. fitz). Fast, table-aware, no vision cost.
+openai~=1.30             # Used for embeddings (text-embedding-3-small) and gpt-4o-mini.
+chromadb~=0.5            # Persistent vector store. We commit the chroma_db/ dir to the repo.
+rank-bm25~=0.2.2         # Lexical retriever. Pure Python — no infra to spin up.
+tiktoken~=0.7            # Token counter for the 50-token chunk overlap. Matches OpenAI's tokenizer.
+numpy~=1.26              # Explicit pin to avoid Chroma's transitive resolver landing on a wheel-less version.
+
+# Streamlit Community Cloud runs Debian. Its system sqlite3 is older than chromadb requires,
+# so we vendor a newer sqlite via pysqlite3-binary on Linux only. Locally on Windows this
+# wheel doesn't exist and isn't needed — Windows ships a recent enough sqlite.
+# The corresponding sys.modules swap lives in src/embed.py and src/retrieve.py.
+pysqlite3-binary~=0.5 ; sys_platform == "linux"

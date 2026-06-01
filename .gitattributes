@@ -1,0 +1,14 @@
+# Force LF line endings for text files in the repo, regardless of the contributor's OS.
+# Reason: this repo is developed on Windows but deployed on Linux (Streamlit Cloud).
+# Without this, CRLF can sneak into committed files and cause subtle diffs / shebang issues.
+
+* text=auto eol=lf
+
+# Binary files: never touch.
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+
+# Vector store internals are SQLite + parquet — binary, leave alone.
+chroma_db/** binary
