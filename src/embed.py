@@ -51,11 +51,11 @@ from pathlib import Path
 import chromadb
 from openai import OpenAI
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-CHUNKS_PATH = PROJECT_ROOT / "data" / "chunks.json"
-CHROMA_DIR = PROJECT_ROOT / "chroma_db"
+from src.docs import COLLECTION_NAME, PROJECT_ROOT, chroma_dir, chunks_json_path
 
-COLLECTION_NAME = "infosys_ar"
+CHUNKS_PATH = chunks_json_path()
+CHROMA_DIR = chroma_dir()
+
 EMBEDDING_MODEL = "text-embedding-3-small"
 EMBEDDING_DIM = 1536           # what text-embedding-3-small returns by default
 BATCH_SIZE = 100               # chunks per OpenAI embeddings request
@@ -89,7 +89,11 @@ def build_index(
     client_chroma = chromadb.PersistentClient(path=str(chroma_dir))
 
     # Idempotent rebuild: drop existing collection if present.
-    existing = [c.name for c in client_chroma.list_collections()]
+    # chromadb 0.6+ changed list_collections() to return collection NAMES
+    # (strings), not Collection objects. We accept either shape so this
+    # works on 0.5 and 0.6.
+    raw = client_chroma.list_collections()
+    existing = [c if isinstance(c, str) else getattr(c, "name", str(c)) for c in raw]
     if COLLECTION_NAME in existing:
         print(f"[embed] dropping existing collection '{COLLECTION_NAME}'")
         client_chroma.delete_collection(COLLECTION_NAME)
@@ -110,10 +114,17 @@ def build_index(
         total_tokens += used
 
         # Chroma metadata values must be primitive types (str, int, float, bool).
-        # We store the page number (for citations) and token count (for debugging).
+        # We store doc slug/display (for citations), page number, and token
+        # count (for debugging). The slug is also what enables doc-filtered
+        # retrieval via Chroma's `where` clause at query time.
         ids = [c["id"] for c in batch]
         metadatas = [
-            {"page_number": int(c["page_number"]), "token_count": int(c["token_count"])}
+            {
+                "source_doc_slug": str(c["source_doc_slug"]),
+                "source_doc_display": str(c["source_doc_display"]),
+                "page_number": int(c["page_number"]),
+                "token_count": int(c["token_count"]),
+            }
             for c in batch
         ]
         collection.add(ids=ids, embeddings=vectors, documents=texts, metadatas=metadatas)

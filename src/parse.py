@@ -55,11 +55,10 @@ import fitz  # PyMuPDF
 from openai import OpenAI
 
 # === Paths =================================================================
-# Anchor every path off the project root so the module is location-agnostic
-# (runs identically on Windows dev and Linux Streamlit Cloud).
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-PDF_PATH = PROJECT_ROOT / "data" / "infosys_ar.pdf"
-OUT_PATH = PROJECT_ROOT / "data" / "parsed.json"
+# Source-of-truth for the corpus lives in src/docs.py. parse.py consumes
+# a Doc and writes a per-doc parsed file. main() iterates DOCS by default
+# but accepts --doc <slug> to re-parse just one.
+from src.docs import DOCS, DOCS_BY_SLUG, Doc, PROJECT_ROOT, parsed_json_path
 
 # === Router thresholds =====================================================
 # Tuning bias: prefer FALSE NEGATIVES over false positives. A missed chart
@@ -331,11 +330,11 @@ def _build_composite_text(page_data: dict) -> str:
 # === Main orchestration ====================================================
 
 def parse_pdf(
-    pdf_path: Path = PDF_PATH,
+    src_doc: Doc,
     start_page: int = 0,
     limit_pages: int | None = None,
 ) -> dict:
-    """Two-pass parse.
+    """Two-pass parse for a single Doc from DOCS.
 
     Pass 1 (cheap, no rendering): count how many pages each image xref
     appears on, so the router can detect repeated brand elements.
@@ -346,12 +345,13 @@ def parse_pdf(
     `start_page` and `limit_pages` are 0-indexed and primarily for smoke
     testing arbitrary page windows. Both default to "process the whole doc".
     """
+    pdf_path = src_doc.path
     doc = fitz.open(pdf_path)
     total_pages_in_pdf = doc.page_count  # capture BEFORE closing the doc
     end_page = total_pages_in_pdf if limit_pages is None else min(total_pages_in_pdf, start_page + limit_pages)
     page_range = range(start_page, end_page)
     n_pages = len(page_range)
-    print(f"[parse] opened {pdf_path.name}: {total_pages_in_pdf} pages total, processing pages {start_page+1}-{end_page}")
+    print(f"[parse] [{src_doc.slug}] opened {pdf_path.name}: {total_pages_in_pdf} pages total, processing pages {start_page+1}-{end_page}")
 
     # ----- Pass 1: xref repetition counts -----
     # Only iterate the requested window: repetition counts should reflect
@@ -447,7 +447,12 @@ def parse_pdf(
                    + (cum_output_tokens / 1_000_000) * COST_PER_1M_OUTPUT_USD
 
     return {
-        "source_pdf": str(pdf_path.relative_to(PROJECT_ROOT)).replace("\\", "/"),
+        "source_doc": {
+            "slug": src_doc.slug,
+            "display": src_doc.display,
+            "fiscal_year_ending": src_doc.fiscal_year_ending,
+            "pdf_path": str(pdf_path.relative_to(PROJECT_ROOT)).replace("\\", "/"),
+        },
         "page_count_total": total_pages_in_pdf,
         "page_count_parsed": n_pages,
         "page_range_parsed": [start_page + 1, end_page],
@@ -476,42 +481,48 @@ def parse_pdf(
     }
 
 
+def _parse_one(src_doc: Doc, start_page: int, limit_pages: int | None) -> None:
+    if not src_doc.path.exists():
+        sys.exit(f"[parse] PDF not found at {src_doc.path}. Drop it there and re-run.")
+    out_path = parsed_json_path(src_doc.slug)
+    print(f"[parse] [{src_doc.slug}] output -> {out_path}")
+    t0 = time.time()
+    out = parse_pdf(src_doc, start_page=start_page, limit_pages=limit_pages)
+    elapsed = time.time() - t0
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
+    sz_mb = out_path.stat().st_size / (1024 * 1024)
+    print(f"[parse] [{src_doc.slug}] DONE in {elapsed:.1f}s, wrote {out_path.name} ({sz_mb:.2f} MB)")
+    print(f"[parse] [{src_doc.slug}] image classifications: {out['stats']['image_classifications']}")
+    print(
+        f"[parse] [{src_doc.slug}] vision: {out['stats']['vision_calls']} calls, "
+        f"{out['stats']['vision_failures']} failures, "
+        f"~${out['stats']['vision_cost_usd_estimate']:.4f}"
+    )
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Parse the Infosys annual-report PDF.")
+    parser = argparse.ArgumentParser(description="Parse one or all Infosys annual-report PDFs.")
+    parser.add_argument(
+        "--doc", type=str, default=None,
+        help=f"Parse only this doc slug; default = all of {[d.slug for d in DOCS]}.",
+    )
     parser.add_argument(
         "--start", type=int, default=1,
-        help="1-indexed page number to start from (default: 1).",
+        help="1-indexed page number to start from (smoke-test helper).",
     )
     parser.add_argument(
         "--limit", type=int, default=None,
         help="Parse only N pages starting at --start (smoke-test helper).",
     )
-    parser.add_argument(
-        "--out", type=Path, default=OUT_PATH,
-        help=f"Output JSON path (default: {OUT_PATH}).",
-    )
     args = parser.parse_args()
 
-    if not PDF_PATH.exists():
-        sys.exit(f"[parse] PDF not found at {PDF_PATH}. Drop it there and re-run.")
+    targets = [DOCS_BY_SLUG[args.doc]] if args.doc else list(DOCS)
+    if args.doc and args.doc not in DOCS_BY_SLUG:
+        sys.exit(f"[parse] unknown --doc '{args.doc}'. Known: {list(DOCS_BY_SLUG)}")
 
-    print(f"[parse] output -> {args.out}")
-    t0 = time.time()
-    out = parse_pdf(PDF_PATH, start_page=max(0, args.start - 1), limit_pages=args.limit)
-    elapsed = time.time() - t0
-
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
-    sz_mb = args.out.stat().st_size / (1024 * 1024)
-
-    print(f"\n[parse] DONE in {elapsed:.1f}s")
-    print(f"[parse] wrote {args.out} ({sz_mb:.2f} MB)")
-    print(f"[parse] image classifications: {out['stats']['image_classifications']}")
-    print(
-        f"[parse] vision: {out['stats']['vision_calls']} calls, "
-        f"{out['stats']['vision_failures']} failures, "
-        f"~${out['stats']['vision_cost_usd_estimate']:.4f}"
-    )
+    for src_doc in targets:
+        _parse_one(src_doc, start_page=max(0, args.start - 1), limit_pages=args.limit)
 
 
 if __name__ == "__main__":

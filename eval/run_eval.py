@@ -72,10 +72,11 @@ def main() -> None:
         total_cost += a.cost_usd
         total_latency += dt
 
+        cite_str = ",".join(f"{c.doc_slug.upper()}p{c.page}" for c in a.cited) or "-"
         print(
             f"[eval] {i:2d}/{len(qs['questions'])} [{q['category']:13s}] "
             f"{'PASS' if passed else 'FAIL'}  ({reason})  "
-            f"cited={a.cited_pages}  abstain={a.abstained}  ${a.cost_usd:.4f}"
+            f"cited={cite_str}  abstain={a.abstained}  ${a.cost_usd:.4f}"
         )
 
         results.append({
@@ -85,9 +86,13 @@ def main() -> None:
             "expected_abstain": q.get("expected_abstain", False),
             "expected_substring": q.get("expected_answer_substring", ""),
             "answer_text": a.text,
-            "cited_pages": a.cited_pages,
+            "cited": [{"doc_slug": c.doc_slug, "page": c.page} for c in a.cited],
             "abstained": a.abstained,
-            "source_pages": [h.page_number for h in a.sources],
+            "source_keys": [
+                {"doc_slug": h.source_doc_slug, "page": h.page_number}
+                for h in a.sources
+            ],
+            "n_distinct_docs_cited": len({c.doc_slug for c in a.cited}),
             "latency_s": round(dt, 2),
             "cost_usd": a.cost_usd,
             "usage": a.usage,
@@ -123,7 +128,11 @@ def _render_md(meta: dict, summary: dict) -> str:
     lines.append(f"**Ran at (UTC):** {summary['ran_at_utc']}  ")
     lines.append(f"**Model:** {meta['model']}  ")
     lines.append(f"**Retrieval:** {meta['retrieval']}  ")
-    lines.append(f"**Source doc:** {meta['source_doc']}  ")
+    # `source_docs` is a list since we went multi-doc; render as a bulleted block.
+    src_docs = meta.get("source_docs") or [meta.get("source_doc", "(unspecified)")]
+    lines.append("**Source docs:**")
+    for s in src_docs:
+        lines.append(f"- {s}")
     lines.append("")
     lines.append("## Summary")
     lines.append("")
@@ -152,10 +161,15 @@ def _render_md(meta: dict, summary: dict) -> str:
         lines.append("")
         lines.append(f"**Answer:**\n\n> {r['answer_text'].replace(chr(10), chr(10) + '> ')}")
         lines.append("")
+        cite_strs = [f"{c['doc_slug'].upper()} p.{c['page']}" for c in r["cited"]]
+        src_strs = [
+            f"{s['doc_slug'].upper()}:{s['page']}" for s in r["source_keys"]
+        ]
         lines.append(
             f"- abstained: `{r['abstained']}`  "
-            f"- cited pages: `{r['cited_pages']}`  "
-            f"- sources retrieved: `{r['source_pages']}`  "
+            f"- cited: `{cite_strs}`  "
+            f"- docs cited: `{r['n_distinct_docs_cited']}`  "
+            f"- sources retrieved: `{src_strs}`  "
             f"- latency: {r['latency_s']}s  "
             f"- cost: ${r['cost_usd']}"
         )

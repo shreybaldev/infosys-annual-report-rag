@@ -58,10 +58,10 @@ import chromadb
 from openai import OpenAI
 from rank_bm25 import BM25Okapi
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-CHUNKS_PATH = PROJECT_ROOT / "data" / "chunks.json"
-CHROMA_DIR = PROJECT_ROOT / "chroma_db"
-COLLECTION_NAME = "infosys_ar"
+from src.docs import COLLECTION_NAME, chroma_dir, chunks_json_path
+
+CHUNKS_PATH = chunks_json_path()
+CHROMA_DIR = chroma_dir()
 EMBEDDING_MODEL = "text-embedding-3-small"
 
 # RRF smoothing constant. 60 is the value from the original 2009 paper.
@@ -86,6 +86,8 @@ def _tokenize(text: str) -> list[str]:
 @dataclass
 class Hit:
     id: str
+    source_doc_slug: str                   # e.g. "fy24"
+    source_doc_display: str                # e.g. "Infosys FY24"
     page_number: int
     text: str
     rank_vector: int | None = None
@@ -136,17 +138,33 @@ def _get_openai() -> OpenAI:
 
 # === Public API ============================================================
 
-def vector_retrieve(query: str, k: int = 10) -> list[Hit]:
-    """Embed query, query Chroma collection, return top-k by cosine."""
+def _doc_filter_to_where(doc_slugs: list[str] | None) -> dict | None:
+    """Translate an optional doc-slug filter into a Chroma `where` clause.
+    None or empty -> no filter (search all docs). A single slug uses {"$eq":}
+    for clarity; multiple use {"$in":}."""
+    if not doc_slugs:
+        return None
+    if len(doc_slugs) == 1:
+        return {"source_doc_slug": {"$eq": doc_slugs[0]}}
+    return {"source_doc_slug": {"$in": list(doc_slugs)}}
+
+
+def vector_retrieve(query: str, k: int = 10, doc_slugs: list[str] | None = None) -> list[Hit]:
+    """Embed query, query Chroma collection, return top-k by cosine.
+    Optional doc_slugs filter narrows the search via Chroma `where`."""
     oai = _get_openai()
     coll = _get_chroma_collection()
 
     qvec = oai.embeddings.create(model=EMBEDDING_MODEL, input=[query]).data[0].embedding
-    res = coll.query(
-        query_embeddings=[qvec],
-        n_results=k,
-        include=["documents", "metadatas", "distances"],
-    )
+    where = _doc_filter_to_where(doc_slugs)
+    kwargs = {
+        "query_embeddings": [qvec],
+        "n_results": k,
+        "include": ["documents", "metadatas", "distances"],
+    }
+    if where is not None:
+        kwargs["where"] = where
+    res = coll.query(**kwargs)
 
     hits: list[Hit] = []
     for rank, (cid, doc, meta, dist) in enumerate(zip(
@@ -154,6 +172,8 @@ def vector_retrieve(query: str, k: int = 10) -> list[Hit]:
     ), start=1):
         hits.append(Hit(
             id=cid,
+            source_doc_slug=str(meta.get("source_doc_slug", "")),
+            source_doc_display=str(meta.get("source_doc_display", "")),
             page_number=int(meta["page_number"]),
             text=doc,
             rank_vector=rank,
@@ -162,24 +182,34 @@ def vector_retrieve(query: str, k: int = 10) -> list[Hit]:
     return hits
 
 
-def bm25_retrieve(query: str, k: int = 10) -> list[Hit]:
-    """BM25 over the chunk corpus. Returns top-k by BM25 score."""
+def bm25_retrieve(query: str, k: int = 10, doc_slugs: list[str] | None = None) -> list[Hit]:
+    """BM25 over the chunk corpus. Returns top-k by BM25 score.
+    Optional doc_slugs filter is applied post-scoring (the BM25 index is
+    a single flat list across docs; filtering downstream is cheap for N<5K)."""
     bm25, chunks_list = _get_bm25()
     qtok = _tokenize(query)
     scores = bm25.get_scores(qtok)
 
-    # argsort descending; take top-k. rank-bm25 returns numpy.float64 scores;
-    # we cast to plain float for JSON-friendliness downstream.
-    top_idx = sorted(range(len(scores)), key=lambda i: -scores[i])[:k]
+    # Build (idx, score) pairs, optionally filter by doc, then sort + slice.
+    allowed = set(doc_slugs) if doc_slugs else None
+    indexed = [
+        (i, s) for i, s in enumerate(scores)
+        if allowed is None or chunks_list[i]["source_doc_slug"] in allowed
+    ]
+    indexed.sort(key=lambda x: -x[1])
+    top = indexed[:k]
+
     hits: list[Hit] = []
-    for rank, idx in enumerate(top_idx, start=1):
+    for rank, (idx, s) in enumerate(top, start=1):
         c = chunks_list[idx]
         hits.append(Hit(
             id=c["id"],
+            source_doc_slug=str(c["source_doc_slug"]),
+            source_doc_display=str(c["source_doc_display"]),
             page_number=int(c["page_number"]),
             text=c["text"],
             rank_bm25=rank,
-            score_bm25=float(scores[idx]),
+            score_bm25=float(s),
         ))
     return hits
 
@@ -189,23 +219,31 @@ def hybrid_retrieve(
     k: int = 10,
     per_branch_k: int = PER_BRANCH_K,
     rrf_k: int = RRF_K,
+    doc_slugs: list[str] | None = None,
 ) -> list[Hit]:
     """RRF fusion of vector + BM25 branches.
 
     Pull top-`per_branch_k` from each branch (default 20), compute RRF for
-    each unique doc, return top-`k` overall.
+    each unique chunk, return top-`k` overall. Optional doc_slugs filter
+    is passed through to both branches.
     """
-    vec_hits = vector_retrieve(query, k=per_branch_k)
-    bm25_hits = bm25_retrieve(query, k=per_branch_k)
+    vec_hits = vector_retrieve(query, k=per_branch_k, doc_slugs=doc_slugs)
+    bm25_hits = bm25_retrieve(query, k=per_branch_k, doc_slugs=doc_slugs)
 
-    # Merge by id. For each doc seen in either branch, accumulate RRF
+    # Merge by id. For each chunk seen in either branch, accumulate RRF
     # contributions and remember whichever scores/ranks we have.
     merged: dict[str, Hit] = {}
 
     def _upsert(hit: Hit, branch: str, rank: int) -> None:
         h = merged.get(hit.id)
         if h is None:
-            h = Hit(id=hit.id, page_number=hit.page_number, text=hit.text)
+            h = Hit(
+                id=hit.id,
+                source_doc_slug=hit.source_doc_slug,
+                source_doc_display=hit.source_doc_display,
+                page_number=hit.page_number,
+                text=hit.text,
+            )
             merged[hit.id] = h
         contribution = 1.0 / (rrf_k + rank)
         h.rrf_score = (h.rrf_score or 0.0) + contribution
@@ -236,13 +274,15 @@ def _cli() -> None:
     parser.add_argument("query", nargs="+", help="Free-form question.")
     parser.add_argument("--k", type=int, default=5)
     parser.add_argument("--mode", choices=("hybrid", "vector", "bm25"), default="hybrid")
+    parser.add_argument("--doc", action="append", default=None,
+                        help="Filter to a doc slug. Repeatable: --doc fy24 --doc fy25.")
     args = parser.parse_args()
     q = " ".join(args.query)
 
     fn = {"hybrid": hybrid_retrieve, "vector": vector_retrieve, "bm25": bm25_retrieve}[args.mode]
-    hits = fn(q, k=args.k)
+    hits = fn(q, k=args.k, doc_slugs=args.doc)
     print(f"query : {q!r}")
-    print(f"mode  : {args.mode}, top-{args.k}")
+    print(f"mode  : {args.mode}, top-{args.k}, docs={args.doc or 'all'}")
     print("-" * 70)
     for i, h in enumerate(hits, 1):
         details = []
@@ -252,7 +292,7 @@ def _cli() -> None:
             details.append(f"bm25#{h.rank_bm25}/{h.score_bm25:.2f}")
         if h.rrf_score is not None:
             details.append(f"rrf={h.rrf_score:.4f}")
-        print(f"{i}. p.{h.page_number:3d} {h.id}  [{', '.join(details)}]")
+        print(f"{i}. {h.source_doc_display} p.{h.page_number:3d}  {h.id}  [{', '.join(details)}]")
         print(f"   {h.text[:180].strip()}...")
 
 

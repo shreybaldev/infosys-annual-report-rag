@@ -1,10 +1,10 @@
 {
-  "ran_at_utc": "2026-06-02T06:57:46+00:00",
-  "n_questions": 12,
-  "n_passed_auto": 10,
-  "total_cost_usd": 0.0061,
-  "total_latency_s": 39.9,
-  "avg_latency_s": 3.32,
+  "ran_at_utc": "2026-06-02T07:33:13+00:00",
+  "n_questions": 14,
+  "n_passed_auto": 11,
+  "total_cost_usd": 0.01,
+  "total_latency_s": 61.2,
+  "avg_latency_s": 4.37,
   "results": [
     {
       "id": "fl_001",
@@ -12,27 +12,71 @@
       "question": "Who is the current CEO of Infosys?",
       "expected_abstain": false,
       "expected_substring": "Salil Parekh",
-      "answer_text": "The current CEO of Infosys is Salil Parekh, who also serves as the Managing Director (p. 94).",
-      "cited_pages": [
-        94
+      "answer_text": "The current CEO of Infosys is Salil Parekh, who also serves as the Managing Director (FY24, p. 82).",
+      "cited": [
+        {
+          "doc_slug": "fy24",
+          "page": 82
+        }
       ],
       "abstained": false,
-      "source_pages": [
-        94,
-        86,
-        85,
-        83,
-        281,
-        236,
-        265,
-        272
+      "source_keys": [
+        {
+          "doc_slug": "fy25",
+          "page": 94
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 86
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 85
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 84
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 85
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 83
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 281
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 82
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 265
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 236
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 272
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 273
+        }
       ],
-      "latency_s": 3.66,
-      "cost_usd": 0.00046,
+      "n_distinct_docs_cited": 1,
+      "latency_s": 6.87,
+      "cost_usd": 0.00068,
       "usage": {
-        "prompt_tokens": 2964,
-        "completion_tokens": 25,
-        "total_tokens": 2989
+        "prompt_tokens": 4401,
+        "completion_tokens": 28,
+        "total_tokens": 4429
       },
       "auto_grade": {
         "passed": true,
@@ -46,27 +90,71 @@
       "question": "When was Infosys founded?",
       "expected_abstain": false,
       "expected_substring": "1981",
-      "answer_text": "Infosys was founded on July 2, 1981 (p. 39).",
-      "cited_pages": [
-        39
+      "answer_text": "Infosys was founded on July 2, 1981, in Pune, Maharashtra, India, originally as Infosys Consultants Private Limited (FY25, p. 39).",
+      "cited": [
+        {
+          "doc_slug": "fy25",
+          "page": 39
+        }
       ],
       "abstained": false,
-      "source_pages": [
-        62,
-        100,
-        83,
-        39,
-        269,
-        217,
-        268,
-        93
+      "source_keys": [
+        {
+          "doc_slug": "fy25",
+          "page": 62
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 60
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 100
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 81
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 83
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 39
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 269
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 268
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 185
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 38
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 92
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 37
+        }
       ],
-      "latency_s": 3.12,
-      "cost_usd": 0.00046,
+      "n_distinct_docs_cited": 1,
+      "latency_s": 3.27,
+      "cost_usd": 0.0007,
       "usage": {
-        "prompt_tokens": 3026,
-        "completion_tokens": 18,
-        "total_tokens": 3044
+        "prompt_tokens": 4497,
+        "completion_tokens": 36,
+        "total_tokens": 4533
       },
       "auto_grade": {
         "passed": true,
@@ -80,27 +168,71 @@
       "question": "Where is Infosys's registered office located?",
       "expected_abstain": false,
       "expected_substring": "Bangalore",
-      "answer_text": "Infosys's registered office is located at Electronics City, Hosur Road, Bengaluru, Karnataka, India 560 100 (p. 1).",
-      "cited_pages": [
-        1
+      "answer_text": "Infosys's registered office is located at Electronics City, Hosur Road, Bengaluru, Karnataka, India 560 100 (FY24, p. 1).",
+      "cited": [
+        {
+          "doc_slug": "fy24",
+          "page": 1
+        }
       ],
       "abstained": false,
-      "source_pages": [
-        1,
-        59,
-        100,
-        143,
-        62,
-        320,
-        39,
-        244
+      "source_keys": [
+        {
+          "doc_slug": "fy24",
+          "page": 57
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 143
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 1
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 320
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 100
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 239
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 62
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 244
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 55
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 316
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 39
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 120
+        }
       ],
-      "latency_s": 3.1,
-      "cost_usd": 0.00048,
+      "n_distinct_docs_cited": 1,
+      "latency_s": 3.96,
+      "cost_usd": 0.00069,
       "usage": {
-        "prompt_tokens": 3080,
-        "completion_tokens": 30,
-        "total_tokens": 3110
+        "prompt_tokens": 4494,
+        "completion_tokens": 33,
+        "total_tokens": 4527
       },
       "auto_grade": {
         "passed": false,
@@ -114,27 +246,71 @@
       "question": "How has Infosys's total employee count changed in recent years?",
       "expected_abstain": false,
       "expected_substring": "employees",
-      "answer_text": "Between March 31, 2021, and March 31, 2025, Infosys's total employees grew from 259,619 to 323,578, representing a compound annualized growth rate of 5.7% (p. 39).",
-      "cited_pages": [
-        39
+      "answer_text": "Between March 31, 2021, and March 31, 2025, Infosys's total employees grew from 259,619 to 323,578, representing a compound annualized growth rate of 5.7% (FY25, p. 39).",
+      "cited": [
+        {
+          "doc_slug": "fy25",
+          "page": 39
+        }
       ],
       "abstained": false,
-      "source_pages": [
-        107,
-        56,
-        100,
-        177,
-        39,
-        80,
-        57,
-        71
+      "source_keys": [
+        {
+          "doc_slug": "fy24",
+          "page": 36
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 176
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 100
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 177
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 39
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 80
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 57
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 78
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 38
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 68
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 106
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 71
+        }
       ],
-      "latency_s": 2.23,
-      "cost_usd": 0.00052,
+      "n_distinct_docs_cited": 1,
+      "latency_s": 3.15,
+      "cost_usd": 0.00071,
       "usage": {
-        "prompt_tokens": 3224,
-        "completion_tokens": 54,
-        "total_tokens": 3278
+        "prompt_tokens": 4490,
+        "completion_tokens": 57,
+        "total_tokens": 4547
       },
       "auto_grade": {
         "passed": true,
@@ -148,25 +324,66 @@
       "question": "What has been the trend in Infosys's R&D expenditure as a percentage of revenue?",
       "expected_abstain": false,
       "expected_substring": "R&D",
-      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not include information about Infosys's R&D expenditure or its percentage of revenue.",
-      "cited_pages": [],
+      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not include specific information about Infosys's R&D expenditure as a percentage of revenue for either fiscal year.",
+      "cited": [],
       "abstained": true,
-      "source_pages": [
-        237,
-        66,
-        39,
-        74,
-        38,
-        157,
-        62,
-        199
+      "source_keys": [
+        {
+          "doc_slug": "fy24",
+          "page": 67
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 198
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 36
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 74
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 71
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 37
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 39
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 38
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 199
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 62
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 157
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 39
+        }
       ],
-      "latency_s": 2.12,
-      "cost_usd": 0.00049,
+      "n_distinct_docs_cited": 0,
+      "latency_s": 3.09,
+      "cost_usd": 0.00069,
       "usage": {
-        "prompt_tokens": 3135,
-        "completion_tokens": 26,
-        "total_tokens": 3161
+        "prompt_tokens": 4499,
+        "completion_tokens": 31,
+        "total_tokens": 4530
       },
       "auto_grade": {
         "passed": false,
@@ -180,29 +397,83 @@
       "question": "Summarize Infosys's strategy around generative AI and Topaz from the report.",
       "expected_abstain": false,
       "expected_substring": "Topaz",
-      "answer_text": "Infosys's strategy around generative AI is centered on leveraging its Infosys Topaz® platform, which encompasses a suite of AI-first services, solutions, and tools designed to enhance adaptability and flexibility for businesses. The company has successfully delivered over 400 generative AI projects, focusing on improving customer interactions, marketing efficiencies, code quality, and overall organizational productivity (pp. 40, 53). Infosys aims to help enterprises build resilience and drive innovation through AI, positioning itself as a partner in navigating digital transformation (p. 41). The emphasis on collaboration with various partners, including hyper-scalers and startups, further strengthens its capabilities in delivering tailored AI solutions (p. 53).",
-      "cited_pages": [
-        40,
-        53,
-        41
+      "answer_text": "Infosys's strategy around generative AI and its Topaz platform focuses on leveraging AI to drive business transformation and enhance customer experiences. The company has trained over 275,000 employees on AI and has successfully delivered over 400 generative AI projects. Infosys Topaz® serves as an AI-first suite of services, solutions, and platforms that includes specialized models for domain adaptation and a Responsible AI framework. This approach aims to help enterprises improve adaptability, unlock efficiencies, and build connected ecosystems, ultimately enabling them to reimagine their business processes and achieve sustainable growth (FY25, pp. 39, 52; FY24, pp. 47, 50).",
+      "cited": [
+        {
+          "doc_slug": "fy25",
+          "page": 39
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 52
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 47
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 50
+        }
       ],
       "abstained": false,
-      "source_pages": [
-        53,
-        40,
-        52,
-        62,
-        49,
-        39,
-        41,
-        108
+      "source_keys": [
+        {
+          "doc_slug": "fy25",
+          "page": 53
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 40
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 50
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 47
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 52
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 62
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 38
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 49
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 39
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 46
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 37
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 39
+        }
       ],
-      "latency_s": 4.59,
-      "cost_usd": 0.00051,
+      "n_distinct_docs_cited": 2,
+      "latency_s": 4.69,
+      "cost_usd": 0.0007,
       "usage": {
-        "prompt_tokens": 2871,
-        "completion_tokens": 139,
-        "total_tokens": 3010
+        "prompt_tokens": 4141,
+        "completion_tokens": 135,
+        "total_tokens": 4276
       },
       "auto_grade": {
         "passed": true,
@@ -216,28 +487,87 @@
       "question": "What are the main competitive and regulatory risks Infosys discloses?",
       "expected_abstain": false,
       "expected_substring": "competition",
-      "answer_text": "Infosys identifies several competitive and regulatory risks in its annual report:\n\n- **Client Dependency**: A significant portion of revenues relies on a limited number of clients, meaning the loss of any major client could severely impact the business (p. 5).\n- **Financial Stability of Clients**: Factors like demand and supply challenges, currency fluctuations, and geopolitical conflicts may affect clients' financial stability, impacting Infosys's ability to recover fees (p. 5).\n- **Intense Competition**: The technology services market is highly competitive, which could affect win rates and pricing, potentially reducing market share and profits (p. 5).\n- **Regulatory Compliance**: Changes in regulations, such as tax benefits or incentives from the Government of India, could adversely affect net income (p. 32).\n\nThese risks highlight the challenges Infosys faces in maintaining its competitive edge and complying with regulatory requirements.",
-      "cited_pages": [
-        5,
-        32
+      "answer_text": "Infosys identifies several competitive and regulatory risks in its annual reports:\n\n**Competitive Risks:**\n- Intense competition in the technology services market could affect win rates and pricing, potentially reducing market share and revenues (FY25, p. 5).\n- A significant portion of revenues depends on a limited number of clients, meaning the loss of any major client could severely impact the business (FY25, p. 5).\n- The company must continuously anticipate and develop new services to keep pace with rapid technological changes and evolving client preferences (FY25, p. 12).\n\n**Regulatory Risks:**\n- Compliance with various laws and regulations, including those related to climate action and environmental disclosures, poses risks. Non-compliance could lead to penalties and damage to reputation (FY24, p. 27).\n- Changes in tax benefits or incentives from the Government of India could adversely affect net income (FY25, p. 32).\n- The differing requirements of regulatory bodies, such as SEBI and NYSE, create complexities in governance and compliance (FY25, pp. 151-152). \n\nThese risks highlight the challenges Infosys faces in maintaining its competitive edge while navigating a complex regulatory landscape.",
+      "cited": [
+        {
+          "doc_slug": "fy25",
+          "page": 5
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 12
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 27
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 32
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 151
+        }
       ],
       "abstained": false,
-      "source_pages": [
-        152,
-        5,
-        28,
-        151,
-        12,
-        153,
-        62,
-        32
+      "source_keys": [
+        {
+          "doc_slug": "fy24",
+          "page": 150
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 152
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 151
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 12
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 27
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 334
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 153
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 5
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 55
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 32
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 62
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 336
+        }
       ],
-      "latency_s": 4.4,
-      "cost_usd": 0.00054,
+      "n_distinct_docs_cited": 2,
+      "latency_s": 6.98,
+      "cost_usd": 0.00078,
       "usage": {
-        "prompt_tokens": 2866,
-        "completion_tokens": 180,
-        "total_tokens": 3046
+        "prompt_tokens": 4237,
+        "completion_tokens": 241,
+        "total_tokens": 4478
       },
       "auto_grade": {
         "passed": true,
@@ -251,32 +581,70 @@
       "question": "How does Infosys describe its approach to environmental sustainability and net-zero commitments?",
       "expected_abstain": false,
       "expected_substring": "carbon",
-      "answer_text": "Infosys has articulated its commitment to environmental sustainability through its ESG Vision 2030, which aims to \"shape and share solutions that serve the development of businesses and communities.\" As part of this vision, Infosys has maintained carbon neutrality for six consecutive years and has refreshed its ambitions to become climate positive by 2030. This involves implementing initiatives to reduce greenhouse gas emissions across scope 1, 2, and 3, sequestering more carbon than it emits, and moving beyond net zero. Additionally, Infosys is focused on empowering over 18 million people through digital skilling programs and creating sustainable communities through various CSR efforts, including healthcare and women's empowerment (pp. 63, 100).",
-      "cited_pages": [
-        63,
-        100
+      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not include specific details about Infosys's approach to environmental sustainability and net-zero commitments.",
+      "cited": [],
+      "abstained": true,
+      "source_keys": [
+        {
+          "doc_slug": "fy25",
+          "page": 100
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 28
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 37
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 39
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 60
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 26
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 153
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 39
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 62
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 300
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 42
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 52
+        }
       ],
-      "abstained": false,
-      "source_pages": [
-        28,
-        100,
-        39,
-        101,
-        77,
-        107,
-        63,
-        153
-      ],
-      "latency_s": 3.85,
-      "cost_usd": 0.00054,
+      "n_distinct_docs_cited": 0,
+      "latency_s": 5.25,
+      "cost_usd": 0.00067,
       "usage": {
-        "prompt_tokens": 3020,
-        "completion_tokens": 141,
-        "total_tokens": 3161
+        "prompt_tokens": 4327,
+        "completion_tokens": 27,
+        "total_tokens": 4354
       },
       "auto_grade": {
-        "passed": true,
-        "reason": "substring matched"
+        "passed": false,
+        "reason": "abstained when an answer was expected"
       },
       "notes_truth": "Infosys has publicly committed to carbon-neutral / ESG goals; should be present."
     },
@@ -286,27 +654,71 @@
       "question": "What is the geographic revenue breakdown for Infosys (by region)?",
       "expected_abstain": false,
       "expected_substring": "North America",
-      "answer_text": "The geographic revenue breakdown for Infosys for the last three fiscal years is as follows:\n\n- **North America**: \n  - Fiscal 2025: 57.9%\n  - Fiscal 2024: 60.1%\n  - Fiscal 2023: 61.8%\n  \n- **Europe**: \n  - Fiscal 2025: 29.8%\n  - Fiscal 2024: 27.6%\n  - Fiscal 2023: 25.7%\n  \n- **Rest of the World**: \n  - Fiscal 2025: 9.2%\n  - Fiscal 2024: 9.8%\n  - Fiscal 2023: 9.9%\n  \n- **India**: \n  - Fiscal 2025: 3.1%\n  - Fiscal 2024: 2.5%\n  - Fiscal 2023: 2.6% (p. 56).",
-      "cited_pages": [
-        56
+      "answer_text": "For fiscal 2025, the geographic revenue breakdown for Infosys is as follows:\n\n- North America: 57.9%\n- Europe: 29.8%\n- Rest of the World: 9.2%\n- India: 3.1%\n\nThis distribution reflects a total of 100.0% (FY25, p. 56).",
+      "cited": [
+        {
+          "doc_slug": "fy25",
+          "page": 56
+        }
       ],
       "abstained": false,
-      "source_pages": [
-        70,
-        237,
-        38,
-        216,
-        62,
-        56,
-        201,
-        203
+      "source_keys": [
+        {
+          "doc_slug": "fy24",
+          "page": 67
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 70
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 38
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 216
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 200
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 62
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 214
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 60
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 36
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 237
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 56
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 198
+        }
       ],
-      "latency_s": 4.5,
-      "cost_usd": 0.0006,
+      "n_distinct_docs_cited": 1,
+      "latency_s": 4.7,
+      "cost_usd": 0.00075,
       "usage": {
-        "prompt_tokens": 3203,
-        "completion_tokens": 198,
-        "total_tokens": 3401
+        "prompt_tokens": 4683,
+        "completion_tokens": 73,
+        "total_tokens": 4756
       },
       "auto_grade": {
         "passed": true,
@@ -320,27 +732,75 @@
       "question": "What were Infosys's operating segments and their relative revenue contributions?",
       "expected_abstain": false,
       "expected_substring": "Financial Services",
-      "answer_text": "Infosys's operating segments and their relative revenue contributions for fiscal 2025 were as follows:\n\n- Financial Services: 27.7%\n- Retail: 13.5%\n- Communications: 11.7%\n- Energy, Utilities, Resources and Services: 13.3%\n- Manufacturing: 15.5%\n- Hi-Tech: 8.0%\n- Life Sciences: 7.3%\n- All Other segments: 3.0% (p. 56).",
-      "cited_pages": [
-        56
+      "answer_text": "Infosys's operating segments and their relative revenue contributions for fiscal 2024 were as follows:\n\n- **Financial Services**: 27.4%\n- **Retail**: 14.7%\n- **Communication**: 11.7%\n- **Energy, Utilities, Resources and Services**: 13.0%\n- **Manufacturing**: 14.5%\n- **Hi-Tech**: 8.1%\n- **Life Sciences**: 7.5%\n- **All Other Segments**: 3.1% (FY24, pp. 63, 67).",
+      "cited": [
+        {
+          "doc_slug": "fy24",
+          "page": 63
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 67
+        }
       ],
       "abstained": false,
-      "source_pages": [
-        201,
-        237,
-        66,
-        203,
-        39,
-        65,
-        56,
-        304
+      "source_keys": [
+        {
+          "doc_slug": "fy24",
+          "page": 233
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 201
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 67
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 198
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 237
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 65
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 200
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 63
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 36
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 232
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 54
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 304
+        }
       ],
-      "latency_s": 4.62,
-      "cost_usd": 0.00056,
+      "n_distinct_docs_cited": 1,
+      "latency_s": 4.84,
+      "cost_usd": 0.00079,
       "usage": {
-        "prompt_tokens": 3307,
-        "completion_tokens": 100,
-        "total_tokens": 3407
+        "prompt_tokens": 4760,
+        "completion_tokens": 124,
+        "total_tokens": 4884
       },
       "auto_grade": {
         "passed": true,
@@ -355,24 +815,65 @@
       "expected_abstain": true,
       "expected_substring": "",
       "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not include information about Infosys's current stock price.",
-      "cited_pages": [],
+      "cited": [],
       "abstained": true,
-      "source_pages": [
-        114,
-        38,
-        334,
-        255,
-        216,
-        356,
-        62,
-        305
+      "source_keys": [
+        {
+          "doc_slug": "fy25",
+          "page": 38
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 334
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 36
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 255
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 161
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 250
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 114
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 305
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 216
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 314
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 214
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 293
+        }
       ],
-      "latency_s": 1.91,
-      "cost_usd": 0.00047,
+      "n_distinct_docs_cited": 0,
+      "latency_s": 2.36,
+      "cost_usd": 0.00066,
       "usage": {
-        "prompt_tokens": 3076,
+        "prompt_tokens": 4287,
         "completion_tokens": 21,
-        "total_tokens": 3097
+        "total_tokens": 4308
       },
       "auto_grade": {
         "passed": true,
@@ -386,31 +887,244 @@
       "question": "What were Infosys's revenue numbers for fiscal year 2026?",
       "expected_abstain": true,
       "expected_substring": "",
-      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not include revenue numbers for fiscal year 2026.",
-      "cited_pages": [],
+      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not include any information about Infosys's revenue numbers for fiscal year 2026.",
+      "cited": [],
       "abstained": true,
-      "source_pages": [
-        77,
-        226,
-        38,
-        265,
-        39,
-        227,
-        62,
-        142
+      "source_keys": [
+        {
+          "doc_slug": "fy24",
+          "page": 67
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 36
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 224
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 38
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 260
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 37
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 265
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 39
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 152
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 198
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 92
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 39
+        }
       ],
-      "latency_s": 1.79,
-      "cost_usd": 0.00048,
+      "n_distinct_docs_cited": 0,
+      "latency_s": 2.53,
+      "cost_usd": 0.0007,
       "usage": {
-        "prompt_tokens": 3117,
-        "completion_tokens": 21,
-        "total_tokens": 3138
+        "prompt_tokens": 4580,
+        "completion_tokens": 27,
+        "total_tokens": 4607
       },
       "auto_grade": {
         "passed": true,
         "reason": "abstained as expected"
       },
-      "notes_truth": "NON-NEGOTIABLE: FY26 is in the future relative to the FY24 report. Must abstain (or correctly note the report covers FY24)."
+      "notes_truth": "NON-NEGOTIABLE: FY26 is in the future relative to the FY25 report (the most recent in the corpus). Must abstain (or correctly note the corpus does not include FY26)."
+    },
+    {
+      "id": "cy_001",
+      "category": "cross_year",
+      "question": "How did Infosys's total employee count change from the FY24 report to the FY25 report?",
+      "expected_abstain": false,
+      "expected_substring": "employee",
+      "answer_text": "Between March 31, 2024, and March 31, 2025, Infosys's total employees grew from 317,240 to 323,578, representing a compound annualized growth rate of 5.7% (FY24, p. 37; FY25, p. 39).",
+      "cited": [
+        {
+          "doc_slug": "fy24",
+          "page": 37
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 39
+        }
+      ],
+      "abstained": false,
+      "source_keys": [
+        {
+          "doc_slug": "fy25",
+          "page": 62
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 102
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 60
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 100
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 282
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 36
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 39
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 282
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 37
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 120
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 99
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 38
+        }
+      ],
+      "n_distinct_docs_cited": 2,
+      "latency_s": 3.57,
+      "cost_usd": 0.00072,
+      "usage": {
+        "prompt_tokens": 4560,
+        "completion_tokens": 65,
+        "total_tokens": 4625
+      },
+      "auto_grade": {
+        "passed": true,
+        "reason": "substring matched"
+      },
+      "notes_truth": "Exercises multi-doc retrieval. Model should pull headcount figures from both years and cite both reports."
+    },
+    {
+      "id": "cy_002",
+      "category": "cross_year",
+      "question": "Compare what Infosys says about its generative AI strategy and Topaz between FY24 and FY25.",
+      "expected_abstain": false,
+      "expected_substring": "Topaz",
+      "answer_text": "In FY24, Infosys emphasized its commitment to generative AI as a means to solve complex business challenges, enhance customer interactions, and improve operational efficiencies. The company highlighted its focus on AI-powered business transformation, aiming to help enterprises reimagine their processes and achieve measurable outcomes (FY24, pp. 38, 47). \n\nBy FY25, Infosys expanded on its generative AI strategy with the introduction of Infosys Topaz®, which is described as an AI-first suite of services and solutions. This includes a poly-AI approach, specialized models for domain adaptation, and a robust ecosystem of partners. Infosys reported successfully delivering over 400 generative AI projects, showcasing its commitment to leveraging AI for business resilience and innovation (FY25, pp. 40, 53). \n\nOverall, while FY24 laid the groundwork for generative AI's role in transformation, FY25 presented a more developed strategy with specific offerings and measurable achievements through Infosys Topaz®.",
+      "cited": [
+        {
+          "doc_slug": "fy24",
+          "page": 38
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 47
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 40
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 53
+        }
+      ],
+      "abstained": false,
+      "source_keys": [
+        {
+          "doc_slug": "fy25",
+          "page": 53
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 40
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 38
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 41
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 39
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 50
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 52
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 47
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 49
+        },
+        {
+          "doc_slug": "fy24",
+          "page": 46
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 57
+        },
+        {
+          "doc_slug": "fy25",
+          "page": 305
+        }
+      ],
+      "n_distinct_docs_cited": 2,
+      "latency_s": 5.96,
+      "cost_usd": 0.00074,
+      "usage": {
+        "prompt_tokens": 4159,
+        "completion_tokens": 197,
+        "total_tokens": 4356
+      },
+      "auto_grade": {
+        "passed": true,
+        "reason": "substring matched"
+      },
+      "notes_truth": "Exercises multi-doc synthesis. Topaz was launched FY23-FY24, so should appear in both reports with possibly different framing."
     }
   ]
 }

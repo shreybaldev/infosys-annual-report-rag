@@ -1,22 +1,22 @@
 """
 Step 8: deterministic post-hoc checks on a generated Answer.
 
-These run AFTER the LLM has produced its response. They are *defensive* --
-they catch failure modes that the prompt alone cannot guarantee against,
-without requiring another LLM call:
+These run AFTER the LLM has produced its response. They catch failure
+modes that the prompt alone cannot guarantee against, without requiring
+another LLM call:
 
-  1. citations_present     -- the answer must cite at least one page
-                              (skipped if the model abstained).
-  2. citations_grounded    -- every cited page must appear in the chunks
-                              actually retrieved. Catches hallucinated
+  1. citations_present     -- the answer must cite at least one (doc, page)
+                              when not abstained.
+  2. citations_grounded    -- every cited (doc, page) must appear in the
+                              chunks actually retrieved. Catches hallucinated
                               citations where the model invents a page
                               number from thin air.
-  3. citations_in_range    -- cited pages must be 1..max_page. Catches
-                              numbers from the body text being mis-parsed
-                              as citations.
-  4. no_meta_comments      -- flags phrases like "based on the provided
-                              context" that signal the model is talking
-                              about the document rather than from it.
+  3. citations_in_range    -- cited (doc, page) must be valid: doc slug must
+                              exist in our corpus, page must be within that
+                              doc's page count.
+  4. no_meta_comments      -- soft warn on phrases like "based on the
+                              provided context" that signal the model is
+                              talking about the document rather than from it.
 
 Status values:
   pass -- check passed cleanly
@@ -64,16 +64,21 @@ class SanityReport:
     has_warnings: bool = False
 
 
+def _fmt_cite(c: dict) -> str:
+    return f"{c['doc_slug'].upper()}:p{c['page']}"
+
+
 def run_checks(
     *,
     answer_text: str,
     abstained: bool,
-    cited_pages: list[int],
-    source_pages: list[int],
-    max_page: int,
+    cited: list[dict],                 # [{"doc_slug": "fy24", "page": 47}, ...]
+    source_keys: list[dict],           # same shape, from retrieved hits
+    max_page_by_slug: dict[str, int],  # {"fy24": 296, "fy25": 359}
+    known_doc_slugs: set[str],         # {"fy24", "fy25"}
 ) -> SanityReport:
-    """Run all sanity checks. Skips most checks if the answer was an
-    abstention (no claims to verify in that case)."""
+    """Run all sanity checks on a multi-doc answer. Skips most checks if
+    the answer was an abstention (no claims to verify in that case)."""
     checks: list[SanityCheck] = []
 
     if abstained:
@@ -84,24 +89,24 @@ def run_checks(
         return _summarize(checks)
 
     # 1) Citations must exist on a real answer.
-    if not cited_pages:
+    if not cited:
         checks.append(SanityCheck(
             "citations_present", "fail",
-            "answer has no page citations -- ungrounded claim",
+            "answer has no (doc, page) citations -- ungrounded claim",
         ))
     else:
         checks.append(SanityCheck(
             "citations_present", "pass",
-            f"{len(cited_pages)} page citation(s)",
+            f"{len(cited)} citation(s)",
         ))
 
-    # 2) Every cited page must come from a retrieved source.
-    src_set = set(source_pages)
-    ungrounded = [p for p in cited_pages if p not in src_set]
+    # 2) Every cited (doc, page) must come from a retrieved source key.
+    src_set = {(s["doc_slug"], s["page"]) for s in source_keys}
+    ungrounded = [c for c in cited if (c["doc_slug"], c["page"]) not in src_set]
     if ungrounded:
         checks.append(SanityCheck(
             "citations_grounded", "fail",
-            f"cited pages not in retrieved sources: {ungrounded}",
+            f"cited keys not in retrieved sources: {[_fmt_cite(c) for c in ungrounded]}",
         ))
     else:
         checks.append(SanityCheck(
@@ -109,17 +114,26 @@ def run_checks(
             "all citations come from retrieved chunks",
         ))
 
-    # 3) Page numbers must be within the document.
-    out_of_range = [p for p in cited_pages if p < 1 or p > max_page]
+    # 3) Doc slug must exist; page must be within that doc.
+    out_of_range = []
+    for c in cited:
+        slug = c["doc_slug"]
+        page = c["page"]
+        if slug not in known_doc_slugs:
+            out_of_range.append((c, f"unknown doc slug '{slug}'"))
+            continue
+        max_p = max_page_by_slug.get(slug, 0)
+        if page < 1 or page > max_p:
+            out_of_range.append((c, f"page {page} outside [1, {max_p}]"))
     if out_of_range:
         checks.append(SanityCheck(
             "citations_in_range", "fail",
-            f"cited page(s) outside [1, {max_page}]: {out_of_range}",
+            "; ".join(f"{_fmt_cite(c)} ({why})" for c, why in out_of_range),
         ))
     else:
         checks.append(SanityCheck(
             "citations_in_range", "pass",
-            f"all citations within [1, {max_page}]",
+            "all citations within valid doc/page ranges",
         ))
 
     # 4) Meta-comments -- warn, don't fail.

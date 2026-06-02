@@ -1,11 +1,14 @@
 {
   "meta": {
-    "source_doc": "data/infosys_ar.pdf (Infosys FY24 annual report, 359 pages)",
+    "source_docs": [
+      "data/infosys_ar_fy24.pdf (Infosys FY24 Form 20-F, 296 pages)",
+      "data/infosys_ar_fy25.pdf (Infosys FY25 Form 20-F, 359 pages)"
+    ],
     "model": "gpt-4o-mini",
     "retrieval": "hybrid (vector + BM25, RRF k=60, top-8)",
-    "categories": ["fact_lookup", "trend", "synthesis", "table_lookup", "abstention"],
-    "n_questions": 12,
-    "notes": "Two abstention questions are non-negotiable -- they verify the system refuses to confabulate."
+    "categories": ["fact_lookup", "trend", "synthesis", "table_lookup", "abstention", "cross_year"],
+    "n_questions": 14,
+    "notes": "Two abstention questions are non-negotiable. cross_year questions exercise multi-doc retrieval and force the model to cite both reports."
   },
   "questions": [
     {
@@ -102,7 +105,23 @@
       "question": "What were Infosys's revenue numbers for fiscal year 2026?",
       "expected_abstain": true,
       "expected_answer_substring": "",
-      "notes": "NON-NEGOTIABLE: FY26 is in the future relative to the FY24 report. Must abstain (or correctly note the report covers FY24)."
+      "notes": "NON-NEGOTIABLE: FY26 is in the future relative to the FY25 report (the most recent in the corpus). Must abstain (or correctly note the corpus does not include FY26)."
+    },
+    {
+      "id": "cy_001",
+      "category": "cross_year",
+      "question": "How did Infosys's total employee count change from the FY24 report to the FY25 report?",
+      "expected_abstain": false,
+      "expected_answer_substring": "employee",
+      "notes": "Exercises multi-doc retrieval. Model should pull headcount figures from both years and cite both reports."
+    },
+    {
+      "id": "cy_002",
+      "category": "cross_year",
+      "question": "Compare what Infosys says about its generative AI strategy and Topaz between FY24 and FY25.",
+      "expected_abstain": false,
+      "expected_answer_substring": "Topaz",
+      "notes": "Exercises multi-doc synthesis. Topaz was launched FY23-FY24, so should appear in both reports with possibly different framing."
     }
   ]
 }

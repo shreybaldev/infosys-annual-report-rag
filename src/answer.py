@@ -1,33 +1,27 @@
 """
 Step 5: retrieve -> assemble grounded context -> gpt-4o-mini -> answer with citations.
 
+Multi-doc note
+--------------
+Every citation now identifies BOTH the document AND the page, since the
+corpus spans multiple annual reports (currently FY24 and FY25). Citation
+format: (FY24, p. 47) or (FY24, pp. 47, 49) or (FY24, p. 47; FY25, p. 50)
+when the model is comparing across reports.
+
 Pipeline
 --------
-  user query
+  user query (+ optional doc filter)
     -> hybrid_retrieve(top-k chunks)
-    -> render context block: "[Page N] {text}\n\n[Page M] {text}\n..."
+    -> render context block: "[FY24 · Page 47] {text}\n\n[FY25 · Page 50] {text}\n..."
     -> chat.completions.create(messages=[system+user], temperature=0)
-    -> parse out cited page numbers
+    -> parse out cited (doc, page) tuples
     -> return Answer dataclass
-
-Grounding rules embedded in the system prompt
----------------------------------------------
-1. Use ONLY the provided context.
-2. Cite the page number for every claim, like "(p. 47)" or "(pp. 47, 49)".
-3. If the context is insufficient, respond with the literal sentinel
-   "INSUFFICIENT_CONTEXT: <reason>" so the UI can render an abstention.
-4. No outside knowledge; no speculation.
 
 Why a sentinel for abstention (rather than free-form refusal):
    We need a deterministic check downstream to flag abstentions in eval.
    A model that meanders into "Based on what's provided, it appears that..."
    when it shouldn't is the failure mode we're guarding against. The
    sentinel forces a yes/no decision the model has to make explicitly.
-
-The cited-page parser (regex on the LLM output) is intentionally permissive:
-matches "p. 47", "p 47", "pp. 47", "Page 47", and comma-separated runs like
-"pp. 47, 49, 51". It captures plain integers in 1..page_count_max only;
-out-of-range numbers in the text (e.g. dollar amounts) are filtered out.
 """
 
 from __future__ import annotations
@@ -38,18 +32,27 @@ from typing import Literal
 
 from openai import OpenAI
 
+from src.docs import DOCS, DOCS_BY_SLUG
 from src.retrieve import Hit, hybrid_retrieve
 from src.sanity import SanityReport, run_checks
 
-# Page-count ceiling used by sanity checks. Derived from the parsed PDF
-# (359 pages) plus a small headroom so off-by-one edge cases aren't flagged.
-# Lives here (not in sanity.py) so sanity.py stays pure / corpus-agnostic.
-MAX_DOC_PAGE = 359
+# Per-doc max page counts derived from the parsed PDFs. Used by sanity to
+# verify cited pages are in-range for the cited doc. Lives here (not in
+# sanity.py) so sanity stays corpus-agnostic. Update if a new doc is added
+# (or just regenerate from data/parsed_<slug>.json).
+MAX_PAGE_BY_SLUG: dict[str, int] = {
+    "fy24": 296,
+    "fy25": 359,
+}
 
 ANSWER_MODEL = "gpt-4o-mini"
 ANSWER_TEMPERATURE = 0.0
 ANSWER_MAX_TOKENS = 600
-DEFAULT_TOP_K = 8                # context size; ~8 chunks * ~1000 tok = ~8K context tokens
+DEFAULT_TOP_K = 12               # ~12 chunks * ~1000 tok = ~12K context tokens. Bumped from 8
+                                 # when the corpus moved to multi-doc: with 2 docs sharing
+                                 # the same top-k budget, per-doc retrieval depth halves.
+                                 # 12 gives roughly 6 chunks per doc, comparable to the
+                                 # single-doc 8 we originally tuned for.
 
 # Sentinel the model uses to signal it cannot answer from context.
 ABSTAIN_SENTINEL = "INSUFFICIENT_CONTEXT:"
@@ -58,88 +61,125 @@ ABSTAIN_SENTINEL = "INSUFFICIENT_CONTEXT:"
 ANSWER_COST_PER_1M_INPUT = 0.15
 ANSWER_COST_PER_1M_OUTPUT = 0.60
 
+# Build the cite-format examples dynamically from the live DOC slugs so a
+# future doc add doesn't require touching the prompt copy.
+_SLUG_EXAMPLE = DOCS[0].slug.upper() if DOCS else "FY24"
+_SLUG_EXAMPLE_2 = DOCS[1].slug.upper() if len(DOCS) > 1 else _SLUG_EXAMPLE
+
 SYSTEM_PROMPT = (
-    "You are an analyst answering questions about Infosys's annual report.\n\n"
+    "You are an analyst answering questions about Infosys's annual reports.\n"
+    f"The corpus currently includes: {', '.join(d.display for d in DOCS)}.\n\n"
     "GROUNDING RULES (these are hard; do not relax them for style reasons):\n"
     "1. Use ONLY the provided context blocks below. Do not draw on outside\n"
     "   knowledge about Infosys, the industry, or general financial reasoning.\n"
-    "2. Cite the page number for every factual claim in parentheses, like\n"
-    "   (p. 47) or (pp. 47, 49) for multiple. The page must come from a\n"
-    "   context block you actually used.\n"
+    "2. Cite the SOURCE DOC and page number for every factual claim. Format:\n"
+    f"   ({_SLUG_EXAMPLE}, p. 47) for one page, ({_SLUG_EXAMPLE}, pp. 47, 49)\n"
+    f"   for multiple pages in the same doc, or\n"
+    f"   ({_SLUG_EXAMPLE}, p. 47; {_SLUG_EXAMPLE_2}, p. 50) when comparing\n"
+    "   across docs. Each citation must come from a context block you used.\n"
     "3. If the context does not contain enough information to answer,\n"
     f"   respond with exactly one line beginning '{ABSTAIN_SENTINEL}' followed\n"
     "   by a one-sentence explanation of what is missing. Do not attempt a\n"
     "   partial answer in that case.\n"
     "4. Quote numbers, names, and other specifics exactly as they appear in\n"
-    "   the context.\n\n"
+    "   the context.\n"
+    "5. When the user asks about ONE year, answer from that year's doc only.\n"
+    "   When the user asks a trend/compare question, draw on multiple docs\n"
+    "   and attribute each fact to its source.\n\n"
     "STYLE (write naturally; let the question shape the length):\n"
     "- A direct yes/no or single-fact question gets one or two sentences.\n"
     "- A 'summarize' or 'explain' question gets a short paragraph (typically\n"
     "  3-6 sentences). A 'compare' or 'list' question can use a brief\n"
     "  bulleted list if that reads more clearly than prose.\n"
-    "- Sound like a colleague who knows the document well, not like a legal\n"
+    "- Sound like a colleague who knows the documents well, not like a legal\n"
     "  disclosure. Plain language. Don't echo the question back. Don't\n"
     "  preface with 'based on the provided context' or 'the document states\n"
     "  that' -- just answer.\n"
     "- Place citations at the end of the clause they support, not bolted on\n"
-    "  at the end of a paragraph. When several facts in one sentence come\n"
-    "  from multiple pages, combine them: 'Revenue grew to X while margins\n"
-    "  expanded to Y (pp. 47, 49).'\n"
+    "  at the end of a paragraph. Combine cites when several facts in one\n"
+    "  sentence come from the same doc: 'Revenue grew to X while margins\n"
+    f"  expanded to Y ({_SLUG_EXAMPLE}, pp. 47, 49).'\n"
 )
+
+
+@dataclass
+class Citation:
+    doc_slug: str        # e.g. "fy24"
+    page: int            # 1-indexed within that doc
+
+    def as_dict(self) -> dict:
+        return {"doc_slug": self.doc_slug, "page": self.page}
 
 
 @dataclass
 class Answer:
     query: str
     text: str
-    cited_pages: list[int]
-    sources: list[Hit]              # everything retrieved, whether or not cited
+    cited: list[Citation]          # parsed (doc, page) citations
+    sources: list[Hit]             # everything retrieved, whether or not cited
     abstained: bool
     model: str
     mode: Literal["hybrid", "vector", "bm25"]
+    doc_slugs_filter: list[str] | None = None  # None = all docs
     usage: dict = field(default_factory=dict)
     cost_usd: float = 0.0
-    sanity: SanityReport | None = None  # post-hoc deterministic checks (Step 8)
+    sanity: SanityReport | None = None
+
+    # Convenience back-compat-ish helpers for the UI / eval layer.
+    @property
+    def cited_pages(self) -> list[int]:
+        """All cited page numbers, regardless of doc. Used by older code paths
+        that pre-date multi-doc and just want a flat list."""
+        return [c.page for c in self.cited]
 
 
-# Permissive citation parser: matches p./pp./page/pages forms followed by ints.
-# Strips out integers that aren't plausibly page numbers (we clip to <= 1000
-# since the Infosys FY24 doc is 359 pages and we don't want to confuse
-# dollar/year numbers with citations).
+# Citation regex. Matches one citation group like "FY24, p. 47" or
+# "FY24, pp. 47, 49". A single answer can contain multiple groups separated
+# by ";" or in separate parentheses; we run the regex globally.
+#
+# Group 1 = doc slug (case-insensitive, e.g. "FY24")
+# Group 2 = page-list (e.g. "47" or "47, 49, 51")
+#
+# Bounded {1,4} on the page digits so we don't pick up dollar amounts or
+# years like (2024) embedded in normal prose.
 _CITE_PATTERN = re.compile(
-    r"(?i)\b(?:p+\.?|pages?)\s*((?:\d{1,4})(?:\s*,\s*\d{1,4})*)"
+    r"(?i)\b(?P<doc>FY\d{2})\s*,\s*p+\.?\s*(?P<pages>\d{1,4}(?:\s*,\s*\d{1,4})*)"
 )
 
 
-def _parse_cited_pages(text: str, max_page: int = 1000) -> list[int]:
-    """Extract unique page numbers cited in the LLM answer, in first-mention order."""
-    seen: list[int] = []
+def _parse_citations(text: str) -> list[Citation]:
+    """Extract unique (doc_slug, page) citations in first-mention order."""
+    seen: set[tuple[str, int]] = set()
+    out: list[Citation] = []
     for m in _CITE_PATTERN.finditer(text):
-        nums_str = m.group(1)
-        for n_str in nums_str.split(","):
+        slug = m.group("doc").lower()
+        for n_str in m.group("pages").split(","):
             try:
-                n = int(n_str.strip())
+                page = int(n_str.strip())
             except ValueError:
                 continue
-            if 1 <= n <= max_page and n not in seen:
-                seen.append(n)
-    return seen
+            key = (slug, page)
+            if key in seen:
+                continue
+            seen.add(key)
+            out.append(Citation(doc_slug=slug, page=page))
+    return out
 
 
 def _build_context_block(hits: list[Hit]) -> str:
-    """Render retrieved chunks as a labeled context block. The "[Page N]" prefix
-    is what the model anchors citations to -- keeping it visually distinct
-    from the chunk body reduces the chance the model mistakes a number INSIDE
-    the chunk text for the citation marker."""
+    """Render retrieved chunks as a labeled context block.
+    Prefix format: "[FY24 · Page 47]" -- visually distinct so the model
+    anchors citations to it rather than to numbers inside the chunk body."""
     parts = []
     for h in hits:
-        # Truncate very long chunks to keep total context under the model's
-        # comfort zone. ~1500 chars ~= 350 tokens; for 8 hits that's ~3K context
-        # tokens, well within gpt-4o-mini's 128K window but cheap and focused.
         snippet = h.text.strip()
         if len(snippet) > 1500:
+            # Cap individual chunk length so a few outlier-long pages don't
+            # crowd out other relevant ones. ~1500 chars ~= 350 tokens.
             snippet = snippet[:1500] + "...[truncated]"
-        parts.append(f"[Page {h.page_number}]\n{snippet}")
+        # Use the slug in uppercase to match the cite format the model
+        # produces (e.g. "FY24"), keeping prompt + cite vocabulary aligned.
+        parts.append(f"[{h.source_doc_slug.upper()} · Page {h.page_number}]\n{snippet}")
     return "\n\n".join(parts)
 
 
@@ -147,16 +187,18 @@ def answer(
     query: str,
     top_k: int = DEFAULT_TOP_K,
     mode: Literal["hybrid", "vector", "bm25"] = "hybrid",
+    doc_slugs: list[str] | None = None,
 ) -> Answer:
-    """Retrieve -> LLM with grounding rules -> structured answer."""
+    """Retrieve -> LLM with grounding rules -> structured answer.
+    Optional doc_slugs filter restricts retrieval to a subset of the corpus."""
     if mode == "hybrid":
-        hits = hybrid_retrieve(query, k=top_k)
+        hits = hybrid_retrieve(query, k=top_k, doc_slugs=doc_slugs)
     elif mode == "vector":
         from src.retrieve import vector_retrieve
-        hits = vector_retrieve(query, k=top_k)
+        hits = vector_retrieve(query, k=top_k, doc_slugs=doc_slugs)
     else:
         from src.retrieve import bm25_retrieve
-        hits = bm25_retrieve(query, k=top_k)
+        hits = bm25_retrieve(query, k=top_k, doc_slugs=doc_slugs)
 
     context = _build_context_block(hits)
     user_msg = f"CONTEXT:\n\n{context}\n\n---\n\nQUESTION: {query}"
@@ -173,7 +215,7 @@ def answer(
     )
     text = (resp.choices[0].message.content or "").strip()
     abstained = text.lstrip().startswith(ABSTAIN_SENTINEL)
-    cited = [] if abstained else _parse_cited_pages(text)
+    cited = [] if abstained else _parse_citations(text)
 
     usage = resp.usage
     cost = ((usage.prompt_tokens / 1_000_000) * ANSWER_COST_PER_1M_INPUT
@@ -182,19 +224,21 @@ def answer(
     sanity_report = run_checks(
         answer_text=text,
         abstained=abstained,
-        cited_pages=cited,
-        source_pages=[h.page_number for h in hits],
-        max_page=MAX_DOC_PAGE,
+        cited=[c.as_dict() for c in cited],
+        source_keys=[{"doc_slug": h.source_doc_slug, "page": h.page_number} for h in hits],
+        max_page_by_slug=MAX_PAGE_BY_SLUG,
+        known_doc_slugs=set(DOCS_BY_SLUG),
     )
 
     return Answer(
         query=query,
         text=text,
-        cited_pages=cited,
+        cited=cited,
         sources=hits,
         abstained=abstained,
         model=ANSWER_MODEL,
         mode=mode,
+        doc_slugs_filter=doc_slugs,
         usage={
             "prompt_tokens": usage.prompt_tokens,
             "completion_tokens": usage.completion_tokens,
@@ -206,7 +250,7 @@ def answer(
 
 
 # === CLI for quick spot-checks ============================================
-#   python -m src.answer "What was operating margin in FY24"
+#   python -m src.answer "How did revenue change from FY24 to FY25"
 
 def _cli() -> None:
     import argparse
@@ -214,16 +258,18 @@ def _cli() -> None:
     parser.add_argument("query", nargs="+")
     parser.add_argument("--k", type=int, default=DEFAULT_TOP_K)
     parser.add_argument("--mode", choices=("hybrid", "vector", "bm25"), default="hybrid")
+    parser.add_argument("--doc", action="append", default=None,
+                        help="Restrict to a doc slug; repeatable. Default = all docs.")
     args = parser.parse_args()
     q = " ".join(args.query)
 
-    a = answer(q, top_k=args.k, mode=args.mode)
+    a = answer(q, top_k=args.k, mode=args.mode, doc_slugs=args.doc)
     print(f"query        : {q!r}")
-    print(f"mode         : {a.mode} (top-{args.k})")
+    print(f"mode         : {a.mode} (top-{args.k}, docs={a.doc_slugs_filter or 'all'})")
     print(f"abstained    : {a.abstained}")
-    print(f"cited pages  : {a.cited_pages}")
+    print(f"cited        : {[(c.doc_slug, c.page) for c in a.cited]}")
     print(f"tokens       : {a.usage}  cost ~ ${a.cost_usd:.5f}")
-    print(f"sources used (top {len(a.sources)}): {[h.page_number for h in a.sources]}")
+    print(f"sources used : {[(h.source_doc_slug, h.page_number) for h in a.sources]}")
     print("-" * 70)
     print(a.text)
 
