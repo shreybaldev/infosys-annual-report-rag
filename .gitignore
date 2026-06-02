@@ -21,6 +21,10 @@ parse-run.log
 embed-run.log
 ingest-run.log
 
+# Streamlit dev-server logs (local-only).
+streamlit-stdout.log
+streamlit-stderr.log
+
 # Smoke-test scratch outputs (the real artifacts are parsed.json / chunks.json).
 data/parsed_smoketest.json
 data/chunks_smoketest.json
