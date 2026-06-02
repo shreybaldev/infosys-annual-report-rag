@@ -15,3 +15,11 @@ numpy~=1.26              # Explicit pin to avoid Chroma's transitive resolver la
 # wheel doesn't exist and isn't needed — Windows ships a recent enough sqlite.
 # The corresponding sys.modules swap lives in src/embed.py and src/retrieve.py.
 pysqlite3-binary~=0.5 ; sys_platform == "linux"
+
+# protobuf 5+ enforces a stricter generated-code API check that
+# opentelemetry-proto's pb2 files (pulled in transitively by chromadb 0.6)
+# do not satisfy -> _CheckCalledFromGeneratedFile crashes at import time on
+# Streamlit Cloud. Pinning protobuf to the 4.x line restores the old
+# descriptor API behavior. Tracks the chromadb/opentelemetry-proto upgrade.
+protobuf>=4.21,<5
+
