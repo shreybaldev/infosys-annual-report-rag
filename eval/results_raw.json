@@ -1,10 +1,10 @@
 {
-  "ran_at_utc": "2026-06-02T05:19:24+00:00",
+  "ran_at_utc": "2026-06-02T06:57:46+00:00",
   "n_questions": 12,
   "n_passed_auto": 10,
-  "total_cost_usd": 0.0057,
-  "total_latency_s": 34.9,
-  "avg_latency_s": 2.91,
+  "total_cost_usd": 0.0061,
+  "total_latency_s": 39.9,
+  "avg_latency_s": 3.32,
   "results": [
     {
       "id": "fl_001",
@@ -12,9 +12,9 @@
       "question": "Who is the current CEO of Infosys?",
       "expected_abstain": false,
       "expected_substring": "Salil Parekh",
-      "answer_text": "The current CEO of Infosys is Salil Parekh, who also serves as the Managing Director (p. 236).",
+      "answer_text": "The current CEO of Infosys is Salil Parekh, who also serves as the Managing Director (p. 94).",
       "cited_pages": [
-        236
+        94
       ],
       "abstained": false,
       "source_pages": [
@@ -27,12 +27,12 @@
         265,
         272
       ],
-      "latency_s": 4.63,
-      "cost_usd": 0.00043,
+      "latency_s": 3.66,
+      "cost_usd": 0.00046,
       "usage": {
-        "prompt_tokens": 2785,
+        "prompt_tokens": 2964,
         "completion_tokens": 25,
-        "total_tokens": 2810
+        "total_tokens": 2989
       },
       "auto_grade": {
         "passed": true,
@@ -61,12 +61,12 @@
         268,
         93
       ],
-      "latency_s": 2.77,
-      "cost_usd": 0.00044,
+      "latency_s": 3.12,
+      "cost_usd": 0.00046,
       "usage": {
-        "prompt_tokens": 2847,
+        "prompt_tokens": 3026,
         "completion_tokens": 18,
-        "total_tokens": 2865
+        "total_tokens": 3044
       },
       "auto_grade": {
         "passed": true,
@@ -95,12 +95,12 @@
         39,
         244
       ],
-      "latency_s": 2.37,
-      "cost_usd": 0.00045,
+      "latency_s": 3.1,
+      "cost_usd": 0.00048,
       "usage": {
-        "prompt_tokens": 2901,
+        "prompt_tokens": 3080,
         "completion_tokens": 30,
-        "total_tokens": 2931
+        "total_tokens": 3110
       },
       "auto_grade": {
         "passed": false,
@@ -129,12 +129,12 @@
         57,
         71
       ],
-      "latency_s": 2.72,
-      "cost_usd": 0.00049,
+      "latency_s": 2.23,
+      "cost_usd": 0.00052,
       "usage": {
-        "prompt_tokens": 3045,
+        "prompt_tokens": 3224,
         "completion_tokens": 54,
-        "total_tokens": 3099
+        "total_tokens": 3278
       },
       "auto_grade": {
         "passed": true,
@@ -148,7 +148,7 @@
       "question": "What has been the trend in Infosys's R&D expenditure as a percentage of revenue?",
       "expected_abstain": false,
       "expected_substring": "R&D",
-      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not contain information regarding Infosys's R&D expenditure or its percentage of revenue.",
+      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not include information about Infosys's R&D expenditure or its percentage of revenue.",
       "cited_pages": [],
       "abstained": true,
       "source_pages": [
@@ -161,12 +161,12 @@
         62,
         199
       ],
-      "latency_s": 2.07,
-      "cost_usd": 0.00046,
+      "latency_s": 2.12,
+      "cost_usd": 0.00049,
       "usage": {
-        "prompt_tokens": 2956,
+        "prompt_tokens": 3135,
         "completion_tokens": 26,
-        "total_tokens": 2982
+        "total_tokens": 3161
       },
       "auto_grade": {
         "passed": false,
@@ -180,10 +180,11 @@
       "question": "Summarize Infosys's strategy around generative AI and Topaz from the report.",
       "expected_abstain": false,
       "expected_substring": "Topaz",
-      "answer_text": "Infosys's strategy around generative AI is centered on leveraging its AI-first services and solutions through Infosys Topaz®. This includes delivering over 400 generative AI projects that enhance customer interactions, improve operational efficiencies, and drive workforce transformation (p. 53). The company aims to help businesses build resilience and uncover innovations by integrating generative AI into their operating models (p. 40). Additionally, Infosys Topaz® encompasses a poly-AI approach, industry blueprints, and a Responsible AI framework, positioning it as a comprehensive ecosystem for AI-driven business transformation (p. 53).",
+      "answer_text": "Infosys's strategy around generative AI is centered on leveraging its Infosys Topaz® platform, which encompasses a suite of AI-first services, solutions, and tools designed to enhance adaptability and flexibility for businesses. The company has successfully delivered over 400 generative AI projects, focusing on improving customer interactions, marketing efficiencies, code quality, and overall organizational productivity (pp. 40, 53). Infosys aims to help enterprises build resilience and drive innovation through AI, positioning itself as a partner in navigating digital transformation (p. 41). The emphasis on collaboration with various partners, including hyper-scalers and startups, further strengthens its capabilities in delivering tailored AI solutions (p. 53).",
       "cited_pages": [
+        40,
         53,
-        40
+        41
       ],
       "abstained": false,
       "source_pages": [
@@ -196,12 +197,12 @@
         41,
         108
       ],
-      "latency_s": 3.09,
-      "cost_usd": 0.00048,
+      "latency_s": 4.59,
+      "cost_usd": 0.00051,
       "usage": {
-        "prompt_tokens": 2692,
-        "completion_tokens": 120,
-        "total_tokens": 2812
+        "prompt_tokens": 2871,
+        "completion_tokens": 139,
+        "total_tokens": 3010
       },
       "auto_grade": {
         "passed": true,
@@ -215,10 +216,10 @@
       "question": "What are the main competitive and regulatory risks Infosys discloses?",
       "expected_abstain": false,
       "expected_substring": "competition",
-      "answer_text": "Infosys discloses several competitive and regulatory risks, including:\n\n- Intense competition in the market for technology services, which could affect win rates and pricing, potentially reducing market share and decreasing revenues and profits (p. 5).\n- A large part of revenues being dependent on a limited number of clients, where the loss of any major client could significantly impact the business (p. 5).\n- Macroeconomic uncertainties, changes in tariffs, trade restrictions, or geopolitical conflicts that may lead clients to re-evaluate their spending and decide not to extend or renew business (p. 12).",
+      "answer_text": "Infosys identifies several competitive and regulatory risks in its annual report:\n\n- **Client Dependency**: A significant portion of revenues relies on a limited number of clients, meaning the loss of any major client could severely impact the business (p. 5).\n- **Financial Stability of Clients**: Factors like demand and supply challenges, currency fluctuations, and geopolitical conflicts may affect clients' financial stability, impacting Infosys's ability to recover fees (p. 5).\n- **Intense Competition**: The technology services market is highly competitive, which could affect win rates and pricing, potentially reducing market share and profits (p. 5).\n- **Regulatory Compliance**: Changes in regulations, such as tax benefits or incentives from the Government of India, could adversely affect net income (p. 32).\n\nThese risks highlight the challenges Infosys faces in maintaining its competitive edge and complying with regulatory requirements.",
       "cited_pages": [
         5,
-        12
+        32
       ],
       "abstained": false,
       "source_pages": [
@@ -231,12 +232,12 @@
         62,
         32
       ],
-      "latency_s": 3.38,
-      "cost_usd": 0.00048,
+      "latency_s": 4.4,
+      "cost_usd": 0.00054,
       "usage": {
-        "prompt_tokens": 2687,
-        "completion_tokens": 120,
-        "total_tokens": 2807
+        "prompt_tokens": 2866,
+        "completion_tokens": 180,
+        "total_tokens": 3046
       },
       "auto_grade": {
         "passed": true,
@@ -250,7 +251,7 @@
       "question": "How does Infosys describe its approach to environmental sustainability and net-zero commitments?",
       "expected_abstain": false,
       "expected_substring": "carbon",
-      "answer_text": "Infosys describes its approach to environmental sustainability through its ESG Vision 2030, which aims to \"shape and share solutions that serve the development of businesses and communities.\" The company has maintained carbon neutrality for six consecutive years and has refreshed its ESG ambitions to become climate positive by 2030. This includes initiatives to reduce its carbon footprint across scope 1, 2, and 3 GHG emissions, sequester more carbon than it emits, and implement digital skilling programs to empower over 18 million people and create employment opportunities for more than 500,000 individuals (pp. 63, 100).",
+      "answer_text": "Infosys has articulated its commitment to environmental sustainability through its ESG Vision 2030, which aims to \"shape and share solutions that serve the development of businesses and communities.\" As part of this vision, Infosys has maintained carbon neutrality for six consecutive years and has refreshed its ambitions to become climate positive by 2030. This involves implementing initiatives to reduce greenhouse gas emissions across scope 1, 2, and 3, sequestering more carbon than it emits, and moving beyond net zero. Additionally, Infosys is focused on empowering over 18 million people through digital skilling programs and creating sustainable communities through various CSR efforts, including healthcare and women's empowerment (pp. 63, 100).",
       "cited_pages": [
         63,
         100
@@ -266,12 +267,12 @@
         63,
         153
       ],
-      "latency_s": 4.04,
-      "cost_usd": 0.0005,
+      "latency_s": 3.85,
+      "cost_usd": 0.00054,
       "usage": {
-        "prompt_tokens": 2841,
-        "completion_tokens": 124,
-        "total_tokens": 2965
+        "prompt_tokens": 3020,
+        "completion_tokens": 141,
+        "total_tokens": 3161
       },
       "auto_grade": {
         "passed": true,
@@ -285,7 +286,7 @@
       "question": "What is the geographic revenue breakdown for Infosys (by region)?",
       "expected_abstain": false,
       "expected_substring": "North America",
-      "answer_text": "The geographic revenue breakdown for Infosys for fiscal 2024 is as follows:\n\n- North America: 60.1%\n- Europe: 27.6%\n- Rest of the World: 9.8%\n- India: 2.5% (p. 56)",
+      "answer_text": "The geographic revenue breakdown for Infosys for the last three fiscal years is as follows:\n\n- **North America**: \n  - Fiscal 2025: 57.9%\n  - Fiscal 2024: 60.1%\n  - Fiscal 2023: 61.8%\n  \n- **Europe**: \n  - Fiscal 2025: 29.8%\n  - Fiscal 2024: 27.6%\n  - Fiscal 2023: 25.7%\n  \n- **Rest of the World**: \n  - Fiscal 2025: 9.2%\n  - Fiscal 2024: 9.8%\n  - Fiscal 2023: 9.9%\n  \n- **India**: \n  - Fiscal 2025: 3.1%\n  - Fiscal 2024: 2.5%\n  - Fiscal 2023: 2.6% (p. 56).",
       "cited_pages": [
         56
       ],
@@ -300,12 +301,12 @@
         201,
         203
       ],
-      "latency_s": 2.47,
-      "cost_usd": 0.00049,
+      "latency_s": 4.5,
+      "cost_usd": 0.0006,
       "usage": {
-        "prompt_tokens": 3024,
-        "completion_tokens": 58,
-        "total_tokens": 3082
+        "prompt_tokens": 3203,
+        "completion_tokens": 198,
+        "total_tokens": 3401
       },
       "auto_grade": {
         "passed": true,
@@ -319,7 +320,7 @@
       "question": "What were Infosys's operating segments and their relative revenue contributions?",
       "expected_abstain": false,
       "expected_substring": "Financial Services",
-      "answer_text": "Infosys's operating segments and their relative revenue contributions for fiscal 2025 were as follows:\n\n- Financial services: 27.7%\n- Retail: 13.5%\n- Communications: 11.7%\n- Energy, Utilities, Resources and Services: 13.3%\n- Manufacturing: 15.5%\n- Hi-Tech: 8.0%\n- Life Sciences: 7.3%\n- All Other segments: 3.0% (p. 56)",
+      "answer_text": "Infosys's operating segments and their relative revenue contributions for fiscal 2025 were as follows:\n\n- Financial Services: 27.7%\n- Retail: 13.5%\n- Communications: 11.7%\n- Energy, Utilities, Resources and Services: 13.3%\n- Manufacturing: 15.5%\n- Hi-Tech: 8.0%\n- Life Sciences: 7.3%\n- All Other segments: 3.0% (p. 56).",
       "cited_pages": [
         56
       ],
@@ -334,12 +335,12 @@
         56,
         304
       ],
-      "latency_s": 2.97,
-      "cost_usd": 0.00053,
+      "latency_s": 4.62,
+      "cost_usd": 0.00056,
       "usage": {
-        "prompt_tokens": 3128,
+        "prompt_tokens": 3307,
         "completion_tokens": 100,
-        "total_tokens": 3228
+        "total_tokens": 3407
       },
       "auto_grade": {
         "passed": true,
@@ -353,7 +354,7 @@
       "question": "What is Infosys's current stock price?",
       "expected_abstain": true,
       "expected_substring": "",
-      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not contain information about Infosys's current stock price.",
+      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not include information about Infosys's current stock price.",
       "cited_pages": [],
       "abstained": true,
       "source_pages": [
@@ -367,11 +368,11 @@
         305
       ],
       "latency_s": 1.91,
-      "cost_usd": 0.00045,
+      "cost_usd": 0.00047,
       "usage": {
-        "prompt_tokens": 2897,
+        "prompt_tokens": 3076,
         "completion_tokens": 21,
-        "total_tokens": 2918
+        "total_tokens": 3097
       },
       "auto_grade": {
         "passed": true,
@@ -385,7 +386,7 @@
       "question": "What were Infosys's revenue numbers for fiscal year 2026?",
       "expected_abstain": true,
       "expected_substring": "",
-      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not contain any information regarding Infosys's revenue numbers for fiscal year 2026.",
+      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not include revenue numbers for fiscal year 2026.",
       "cited_pages": [],
       "abstained": true,
       "source_pages": [
@@ -398,12 +399,12 @@
         62,
         142
       ],
-      "latency_s": 2.47,
-      "cost_usd": 0.00046,
+      "latency_s": 1.79,
+      "cost_usd": 0.00048,
       "usage": {
-        "prompt_tokens": 2938,
-        "completion_tokens": 27,
-        "total_tokens": 2965
+        "prompt_tokens": 3117,
+        "completion_tokens": 21,
+        "total_tokens": 3138
       },
       "auto_grade": {
         "passed": true,
