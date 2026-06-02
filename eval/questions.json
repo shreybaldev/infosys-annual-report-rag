@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "source_doc": "data/infosys_ar.pdf (Infosys FY24 annual report, 359 pages)",
+    "model": "gpt-4o-mini",
+    "retrieval": "hybrid (vector + BM25, RRF k=60, top-8)",
+    "categories": ["fact_lookup", "trend", "synthesis", "table_lookup", "abstention"],
+    "n_questions": 12,
+    "notes": "Two abstention questions are non-negotiable -- they verify the system refuses to confabulate."
+  },
+  "questions": [
+    {
+      "id": "fl_001",
+      "category": "fact_lookup",
+      "question": "Who is the current CEO of Infosys?",
+      "expected_abstain": false,
+      "expected_answer_substring": "Salil Parekh",
+      "notes": "Salil Parekh is CEO and MD; listed in directors / leadership section."
+    },
+    {
+      "id": "fl_002",
+      "category": "fact_lookup",
+      "question": "When was Infosys founded?",
+      "expected_abstain": false,
+      "expected_answer_substring": "1981",
+      "notes": "Founded July 1981; should appear in 'History and development' section."
+    },
+    {
+      "id": "fl_003",
+      "category": "fact_lookup",
+      "question": "Where is Infosys's registered office located?",
+      "expected_abstain": false,
+      "expected_answer_substring": "Bangalore",
+      "notes": "Registered office in Bengaluru / Bangalore, India."
+    },
+    {
+      "id": "tr_001",
+      "category": "trend",
+      "question": "How has Infosys's total employee count changed in recent years?",
+      "expected_abstain": false,
+      "expected_answer_substring": "employees",
+      "notes": "Smoke test surfaced 'employees grew from 259,619 to 323,578' wording; trend-style question should pull these comparisons."
+    },
+    {
+      "id": "tr_002",
+      "category": "trend",
+      "question": "What has been the trend in Infosys's R&D expenditure as a percentage of revenue?",
+      "expected_abstain": false,
+      "expected_answer_substring": "R&D",
+      "notes": "May or may not be discussed; if not present, valid abstention. Adjust scoring accordingly."
+    },
+    {
+      "id": "sy_001",
+      "category": "synthesis",
+      "question": "Summarize Infosys's strategy around generative AI and Topaz from the report.",
+      "expected_abstain": false,
+      "expected_answer_substring": "Topaz",
+      "notes": "Topaz is Infosys's AI-first services suite. Should pull from business overview / strategy sections."
+    },
+    {
+      "id": "sy_002",
+      "category": "synthesis",
+      "question": "What are the main competitive and regulatory risks Infosys discloses?",
+      "expected_abstain": false,
+      "expected_answer_substring": "competition",
+      "notes": "Risk factors are a 20-F staple; should span multiple pages."
+    },
+    {
+      "id": "sy_003",
+      "category": "synthesis",
+      "question": "How does Infosys describe its approach to environmental sustainability and net-zero commitments?",
+      "expected_abstain": false,
+      "expected_answer_substring": "carbon",
+      "notes": "Infosys has publicly committed to carbon-neutral / ESG goals; should be present."
+    },
+    {
+      "id": "tb_001",
+      "category": "table_lookup",
+      "question": "What is the geographic revenue breakdown for Infosys (by region)?",
+      "expected_abstain": false,
+      "expected_answer_substring": "North America",
+      "notes": "Geographic split usually has North America ~60%+. Comes from a segment table; depends on table extraction quality."
+    },
+    {
+      "id": "tb_002",
+      "category": "table_lookup",
+      "question": "What were Infosys's operating segments and their relative revenue contributions?",
+      "expected_abstain": false,
+      "expected_answer_substring": "Financial Services",
+      "notes": "Segment breakdown by industry vertical (BFSI, Retail, Energy, etc.). From a segment table."
+    },
+    {
+      "id": "ab_001",
+      "category": "abstention",
+      "question": "What is Infosys's current stock price?",
+      "expected_abstain": true,
+      "expected_answer_substring": "",
+      "notes": "NON-NEGOTIABLE: real-time market data is not in a static annual report. Must abstain."
+    },
+    {
+      "id": "ab_002",
+      "category": "abstention",
+      "question": "What were Infosys's revenue numbers for fiscal year 2026?",
+      "expected_abstain": true,
+      "expected_answer_substring": "",
+      "notes": "NON-NEGOTIABLE: FY26 is in the future relative to the FY24 report. Must abstain (or correctly note the report covers FY24)."
+    }
+  ]
+}

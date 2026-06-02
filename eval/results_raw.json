@@ -1,0 +1,415 @@
+{
+  "ran_at_utc": "2026-06-02T05:19:24+00:00",
+  "n_questions": 12,
+  "n_passed_auto": 10,
+  "total_cost_usd": 0.0057,
+  "total_latency_s": 34.9,
+  "avg_latency_s": 2.91,
+  "results": [
+    {
+      "id": "fl_001",
+      "category": "fact_lookup",
+      "question": "Who is the current CEO of Infosys?",
+      "expected_abstain": false,
+      "expected_substring": "Salil Parekh",
+      "answer_text": "The current CEO of Infosys is Salil Parekh, who also serves as the Managing Director (p. 236).",
+      "cited_pages": [
+        236
+      ],
+      "abstained": false,
+      "source_pages": [
+        94,
+        86,
+        85,
+        83,
+        281,
+        236,
+        265,
+        272
+      ],
+      "latency_s": 4.63,
+      "cost_usd": 0.00043,
+      "usage": {
+        "prompt_tokens": 2785,
+        "completion_tokens": 25,
+        "total_tokens": 2810
+      },
+      "auto_grade": {
+        "passed": true,
+        "reason": "substring matched"
+      },
+      "notes_truth": "Salil Parekh is CEO and MD; listed in directors / leadership section."
+    },
+    {
+      "id": "fl_002",
+      "category": "fact_lookup",
+      "question": "When was Infosys founded?",
+      "expected_abstain": false,
+      "expected_substring": "1981",
+      "answer_text": "Infosys was founded on July 2, 1981 (p. 39).",
+      "cited_pages": [
+        39
+      ],
+      "abstained": false,
+      "source_pages": [
+        62,
+        100,
+        83,
+        39,
+        269,
+        217,
+        268,
+        93
+      ],
+      "latency_s": 2.77,
+      "cost_usd": 0.00044,
+      "usage": {
+        "prompt_tokens": 2847,
+        "completion_tokens": 18,
+        "total_tokens": 2865
+      },
+      "auto_grade": {
+        "passed": true,
+        "reason": "substring matched"
+      },
+      "notes_truth": "Founded July 1981; should appear in 'History and development' section."
+    },
+    {
+      "id": "fl_003",
+      "category": "fact_lookup",
+      "question": "Where is Infosys's registered office located?",
+      "expected_abstain": false,
+      "expected_substring": "Bangalore",
+      "answer_text": "Infosys's registered office is located at Electronics City, Hosur Road, Bengaluru, Karnataka, India 560 100 (p. 1).",
+      "cited_pages": [
+        1
+      ],
+      "abstained": false,
+      "source_pages": [
+        1,
+        59,
+        100,
+        143,
+        62,
+        320,
+        39,
+        244
+      ],
+      "latency_s": 2.37,
+      "cost_usd": 0.00045,
+      "usage": {
+        "prompt_tokens": 2901,
+        "completion_tokens": 30,
+        "total_tokens": 2931
+      },
+      "auto_grade": {
+        "passed": false,
+        "reason": "answer missing expected substring 'Bangalore'"
+      },
+      "notes_truth": "Registered office in Bengaluru / Bangalore, India."
+    },
+    {
+      "id": "tr_001",
+      "category": "trend",
+      "question": "How has Infosys's total employee count changed in recent years?",
+      "expected_abstain": false,
+      "expected_substring": "employees",
+      "answer_text": "Between March 31, 2021, and March 31, 2025, Infosys's total employees grew from 259,619 to 323,578, representing a compound annualized growth rate of 5.7% (p. 39).",
+      "cited_pages": [
+        39
+      ],
+      "abstained": false,
+      "source_pages": [
+        107,
+        56,
+        100,
+        177,
+        39,
+        80,
+        57,
+        71
+      ],
+      "latency_s": 2.72,
+      "cost_usd": 0.00049,
+      "usage": {
+        "prompt_tokens": 3045,
+        "completion_tokens": 54,
+        "total_tokens": 3099
+      },
+      "auto_grade": {
+        "passed": true,
+        "reason": "substring matched"
+      },
+      "notes_truth": "Smoke test surfaced 'employees grew from 259,619 to 323,578' wording; trend-style question should pull these comparisons."
+    },
+    {
+      "id": "tr_002",
+      "category": "trend",
+      "question": "What has been the trend in Infosys's R&D expenditure as a percentage of revenue?",
+      "expected_abstain": false,
+      "expected_substring": "R&D",
+      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not contain information regarding Infosys's R&D expenditure or its percentage of revenue.",
+      "cited_pages": [],
+      "abstained": true,
+      "source_pages": [
+        237,
+        66,
+        39,
+        74,
+        38,
+        157,
+        62,
+        199
+      ],
+      "latency_s": 2.07,
+      "cost_usd": 0.00046,
+      "usage": {
+        "prompt_tokens": 2956,
+        "completion_tokens": 26,
+        "total_tokens": 2982
+      },
+      "auto_grade": {
+        "passed": false,
+        "reason": "abstained when an answer was expected"
+      },
+      "notes_truth": "May or may not be discussed; if not present, valid abstention. Adjust scoring accordingly."
+    },
+    {
+      "id": "sy_001",
+      "category": "synthesis",
+      "question": "Summarize Infosys's strategy around generative AI and Topaz from the report.",
+      "expected_abstain": false,
+      "expected_substring": "Topaz",
+      "answer_text": "Infosys's strategy around generative AI is centered on leveraging its AI-first services and solutions through Infosys Topaz®. This includes delivering over 400 generative AI projects that enhance customer interactions, improve operational efficiencies, and drive workforce transformation (p. 53). The company aims to help businesses build resilience and uncover innovations by integrating generative AI into their operating models (p. 40). Additionally, Infosys Topaz® encompasses a poly-AI approach, industry blueprints, and a Responsible AI framework, positioning it as a comprehensive ecosystem for AI-driven business transformation (p. 53).",
+      "cited_pages": [
+        53,
+        40
+      ],
+      "abstained": false,
+      "source_pages": [
+        53,
+        40,
+        52,
+        62,
+        49,
+        39,
+        41,
+        108
+      ],
+      "latency_s": 3.09,
+      "cost_usd": 0.00048,
+      "usage": {
+        "prompt_tokens": 2692,
+        "completion_tokens": 120,
+        "total_tokens": 2812
+      },
+      "auto_grade": {
+        "passed": true,
+        "reason": "substring matched"
+      },
+      "notes_truth": "Topaz is Infosys's AI-first services suite. Should pull from business overview / strategy sections."
+    },
+    {
+      "id": "sy_002",
+      "category": "synthesis",
+      "question": "What are the main competitive and regulatory risks Infosys discloses?",
+      "expected_abstain": false,
+      "expected_substring": "competition",
+      "answer_text": "Infosys discloses several competitive and regulatory risks, including:\n\n- Intense competition in the market for technology services, which could affect win rates and pricing, potentially reducing market share and decreasing revenues and profits (p. 5).\n- A large part of revenues being dependent on a limited number of clients, where the loss of any major client could significantly impact the business (p. 5).\n- Macroeconomic uncertainties, changes in tariffs, trade restrictions, or geopolitical conflicts that may lead clients to re-evaluate their spending and decide not to extend or renew business (p. 12).",
+      "cited_pages": [
+        5,
+        12
+      ],
+      "abstained": false,
+      "source_pages": [
+        152,
+        5,
+        28,
+        151,
+        12,
+        153,
+        62,
+        32
+      ],
+      "latency_s": 3.38,
+      "cost_usd": 0.00048,
+      "usage": {
+        "prompt_tokens": 2687,
+        "completion_tokens": 120,
+        "total_tokens": 2807
+      },
+      "auto_grade": {
+        "passed": true,
+        "reason": "substring matched"
+      },
+      "notes_truth": "Risk factors are a 20-F staple; should span multiple pages."
+    },
+    {
+      "id": "sy_003",
+      "category": "synthesis",
+      "question": "How does Infosys describe its approach to environmental sustainability and net-zero commitments?",
+      "expected_abstain": false,
+      "expected_substring": "carbon",
+      "answer_text": "Infosys describes its approach to environmental sustainability through its ESG Vision 2030, which aims to \"shape and share solutions that serve the development of businesses and communities.\" The company has maintained carbon neutrality for six consecutive years and has refreshed its ESG ambitions to become climate positive by 2030. This includes initiatives to reduce its carbon footprint across scope 1, 2, and 3 GHG emissions, sequester more carbon than it emits, and implement digital skilling programs to empower over 18 million people and create employment opportunities for more than 500,000 individuals (pp. 63, 100).",
+      "cited_pages": [
+        63,
+        100
+      ],
+      "abstained": false,
+      "source_pages": [
+        28,
+        100,
+        39,
+        101,
+        77,
+        107,
+        63,
+        153
+      ],
+      "latency_s": 4.04,
+      "cost_usd": 0.0005,
+      "usage": {
+        "prompt_tokens": 2841,
+        "completion_tokens": 124,
+        "total_tokens": 2965
+      },
+      "auto_grade": {
+        "passed": true,
+        "reason": "substring matched"
+      },
+      "notes_truth": "Infosys has publicly committed to carbon-neutral / ESG goals; should be present."
+    },
+    {
+      "id": "tb_001",
+      "category": "table_lookup",
+      "question": "What is the geographic revenue breakdown for Infosys (by region)?",
+      "expected_abstain": false,
+      "expected_substring": "North America",
+      "answer_text": "The geographic revenue breakdown for Infosys for fiscal 2024 is as follows:\n\n- North America: 60.1%\n- Europe: 27.6%\n- Rest of the World: 9.8%\n- India: 2.5% (p. 56)",
+      "cited_pages": [
+        56
+      ],
+      "abstained": false,
+      "source_pages": [
+        70,
+        237,
+        38,
+        216,
+        62,
+        56,
+        201,
+        203
+      ],
+      "latency_s": 2.47,
+      "cost_usd": 0.00049,
+      "usage": {
+        "prompt_tokens": 3024,
+        "completion_tokens": 58,
+        "total_tokens": 3082
+      },
+      "auto_grade": {
+        "passed": true,
+        "reason": "substring matched"
+      },
+      "notes_truth": "Geographic split usually has North America ~60%+. Comes from a segment table; depends on table extraction quality."
+    },
+    {
+      "id": "tb_002",
+      "category": "table_lookup",
+      "question": "What were Infosys's operating segments and their relative revenue contributions?",
+      "expected_abstain": false,
+      "expected_substring": "Financial Services",
+      "answer_text": "Infosys's operating segments and their relative revenue contributions for fiscal 2025 were as follows:\n\n- Financial services: 27.7%\n- Retail: 13.5%\n- Communications: 11.7%\n- Energy, Utilities, Resources and Services: 13.3%\n- Manufacturing: 15.5%\n- Hi-Tech: 8.0%\n- Life Sciences: 7.3%\n- All Other segments: 3.0% (p. 56)",
+      "cited_pages": [
+        56
+      ],
+      "abstained": false,
+      "source_pages": [
+        201,
+        237,
+        66,
+        203,
+        39,
+        65,
+        56,
+        304
+      ],
+      "latency_s": 2.97,
+      "cost_usd": 0.00053,
+      "usage": {
+        "prompt_tokens": 3128,
+        "completion_tokens": 100,
+        "total_tokens": 3228
+      },
+      "auto_grade": {
+        "passed": true,
+        "reason": "substring matched"
+      },
+      "notes_truth": "Segment breakdown by industry vertical (BFSI, Retail, Energy, etc.). From a segment table."
+    },
+    {
+      "id": "ab_001",
+      "category": "abstention",
+      "question": "What is Infosys's current stock price?",
+      "expected_abstain": true,
+      "expected_substring": "",
+      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not contain information about Infosys's current stock price.",
+      "cited_pages": [],
+      "abstained": true,
+      "source_pages": [
+        114,
+        38,
+        334,
+        255,
+        216,
+        356,
+        62,
+        305
+      ],
+      "latency_s": 1.91,
+      "cost_usd": 0.00045,
+      "usage": {
+        "prompt_tokens": 2897,
+        "completion_tokens": 21,
+        "total_tokens": 2918
+      },
+      "auto_grade": {
+        "passed": true,
+        "reason": "abstained as expected"
+      },
+      "notes_truth": "NON-NEGOTIABLE: real-time market data is not in a static annual report. Must abstain."
+    },
+    {
+      "id": "ab_002",
+      "category": "abstention",
+      "question": "What were Infosys's revenue numbers for fiscal year 2026?",
+      "expected_abstain": true,
+      "expected_substring": "",
+      "answer_text": "INSUFFICIENT_CONTEXT: The provided context does not contain any information regarding Infosys's revenue numbers for fiscal year 2026.",
+      "cited_pages": [],
+      "abstained": true,
+      "source_pages": [
+        77,
+        226,
+        38,
+        265,
+        39,
+        227,
+        62,
+        142
+      ],
+      "latency_s": 2.47,
+      "cost_usd": 0.00046,
+      "usage": {
+        "prompt_tokens": 2938,
+        "completion_tokens": 27,
+        "total_tokens": 2965
+      },
+      "auto_grade": {
+        "passed": true,
+        "reason": "abstained as expected"
+      },
+      "notes_truth": "NON-NEGOTIABLE: FY26 is in the future relative to the FY24 report. Must abstain (or correctly note the report covers FY24)."
+    }
+  ]
+}
