@@ -39,6 +39,12 @@ from typing import Literal
 from openai import OpenAI
 
 from src.retrieve import Hit, hybrid_retrieve
+from src.sanity import SanityReport, run_checks
+
+# Page-count ceiling used by sanity checks. Derived from the parsed PDF
+# (359 pages) plus a small headroom so off-by-one edge cases aren't flagged.
+# Lives here (not in sanity.py) so sanity.py stays pure / corpus-agnostic.
+MAX_DOC_PAGE = 359
 
 ANSWER_MODEL = "gpt-4o-mini"
 ANSWER_TEMPERATURE = 0.0
@@ -81,6 +87,7 @@ class Answer:
     mode: Literal["hybrid", "vector", "bm25"]
     usage: dict = field(default_factory=dict)
     cost_usd: float = 0.0
+    sanity: SanityReport | None = None  # post-hoc deterministic checks (Step 8)
 
 
 # Permissive citation parser: matches p./pp./page/pages forms followed by ints.
@@ -160,6 +167,14 @@ def answer(
     cost = ((usage.prompt_tokens / 1_000_000) * ANSWER_COST_PER_1M_INPUT
             + (usage.completion_tokens / 1_000_000) * ANSWER_COST_PER_1M_OUTPUT)
 
+    sanity_report = run_checks(
+        answer_text=text,
+        abstained=abstained,
+        cited_pages=cited,
+        source_pages=[h.page_number for h in hits],
+        max_page=MAX_DOC_PAGE,
+    )
+
     return Answer(
         query=query,
         text=text,
@@ -174,6 +189,7 @@ def answer(
             "total_tokens": usage.total_tokens,
         },
         cost_usd=round(cost, 5),
+        sanity=sanity_report,
     )
 
 

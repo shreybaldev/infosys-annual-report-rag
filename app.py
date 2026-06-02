@@ -158,6 +158,20 @@ if go:
     cols[2].metric("Cited pages", ", ".join(str(p) for p in a.cited_pages) or "—")
     cols[3].metric("API cost", f"${a.cost_usd:.4f}")
 
+    # --- Sanity report --------------------------------------------------
+    # Surface deterministic post-hoc checks. The whole point of showing this
+    # in the UI is to make the system's self-checking visible to reviewers:
+    # silent guardrails do not communicate care.
+    if a.sanity is not None:
+        if a.sanity.has_failures:
+            st.error("Sanity checks raised failures -- the answer is suspect.")
+        elif a.sanity.has_warnings:
+            st.info("Sanity checks passed with warnings.")
+        with st.expander(f"Sanity checks ({len(a.sanity.checks)})", expanded=a.sanity.has_failures):
+            for c in a.sanity.checks:
+                icon = {"pass": "OK ", "warn": "WARN ", "fail": "FAIL "}.get(c.status, "")
+                st.markdown(f"- **{icon}{c.name}** -- {c.detail}")
+
     # --- Sources: always shown, even on abstention (so you can see what we
     #     looked at and judge whether retrieval missed the right pages). ---
     with st.expander(f"Sources retrieved ({len(a.sources)} chunks)", expanded=False):
