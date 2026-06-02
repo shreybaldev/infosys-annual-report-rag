@@ -16,6 +16,15 @@ Two things the UI layer owns that the library code does NOT:
 from __future__ import annotations
 
 import os
+
+# Force pure-Python protobuf BEFORE any other import. Streamlit Cloud's
+# installed protobuf >=5 enforces a new descriptor API that opentelemetry-
+# proto's generated code (pulled in by chromadb 0.6.x) does not satisfy,
+# causing _CheckCalledFromGeneratedFile to fail at import time. The pure-
+# Python impl skips that check. Local Windows dev never hit this because
+# we had a compatible protobuf installed; only manifested on Cloud.
+os.environ.setdefault("PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION", "python")
+
 import time
 
 import streamlit as st
